@@ -21,7 +21,7 @@ showUsuario usuario =
 
 
 showUsuarios :: [Usuario] -> IO ()
-showUsuarios [] = print("")
+showUsuarios [] = return()
 showUsuarios listaUsuarios =
     do
         print(showUsuario (head listaUsuarios))

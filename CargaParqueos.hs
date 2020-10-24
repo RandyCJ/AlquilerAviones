@@ -1,4 +1,5 @@
 module CargaParqueos where
+import CargaBicicletas
 
 -- Estructura parqueos
 type NombreParqueo = String
@@ -17,8 +18,8 @@ getUbicacionX (Parqueo _ _ _ ubicacionx _) = ubicacionx;
 getUbicacionY (Parqueo _ _ _ _ ubicaciony) = ubicaciony;
 
 --Muestra Parqueos
-showParqueo :: Parqueo -> [Char]
-showParqueo parqueo =
+showParqueo :: Parqueo -> [Bicicleta] -> String -> IO ()
+showParqueo parqueo lB p =
     let
         nombre = getNombreParqueo(parqueo)
         direccion = getDireccionParqueo(parqueo)
@@ -26,15 +27,25 @@ showParqueo parqueo =
         ubx = getUbicacionX(parqueo)
         uby = getUbicacionY(parqueo)
     in
-        "Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby
+        if p == "TP" then
+            do
+            print("Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby)
+            showBicicletas2 lB nombre
+        else
+            if p == provincia then
+                do
+                print("Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby)
+                showBicicletas2 lB nombre
+            else
+                return ()
 
-
-showParqueos :: [Parqueo] -> IO ()
-showParqueos [] = print("")
-showParqueos listaParqueos =
+showParqueos :: [Parqueo] -> [Bicicleta] -> String -> IO ()
+showParqueos [] b s = return()
+showParqueos lP lB p =
     do
-        print(showParqueo (head listaParqueos))
-        showParqueos (tail listaParqueos)
+        showParqueo (head lP) lB p
+        showParqueos (tail lP) lB p
+ 
 
 separaPorComas :: ([Char], [Char]) -> [[Char]]
 separaPorComas (cadena, temp) =
@@ -45,15 +56,15 @@ separaPorComas (cadena, temp) =
         else
             separaPorComas ((tail cadena), temp ++ [(head cadena)])
 
-separaElementos :: [[Char]] -> [Parqueo]
-separaElementos lista =
+separaParqueos :: [[Char]] -> [Parqueo]
+separaParqueos lista =
     if null(lista) then []
     else
-        [crearParqueo(separaPorComas((head lista), ""))] ++ separaElementos (tail lista)
+        [crearParqueo(separaPorComas((head lista), ""))] ++ separaParqueos (tail lista)
 
 leerArchivoParqueos :: FilePath -> IO [Parqueo]
 leerArchivoParqueos archivo = do
     contenido <- readFile archivo
-    let parqueos = separaElementos (lines contenido)
+    let parqueos = separaParqueos (lines contenido)
     return parqueos
 
