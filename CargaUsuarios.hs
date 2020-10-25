@@ -1,4 +1,5 @@
 module CargaUsuarios where
+import FuncionesGenerales
 
 -- Estructura Usuarios
 type Cedula = Integer
@@ -27,23 +28,27 @@ showUsuarios listaUsuarios =
         showUsuario (head listaUsuarios)
         showUsuarios (tail listaUsuarios)
 
-separaPorComas :: ([Char], [Char]) -> [[Char]]
-separaPorComas (cadena, temp) =
-    if cadena == "" then [temp]
-    else
-        if (head cadena) == (head ",") then
-            [temp] ++ separaPorComas ((tail cadena), "")
+show1Usuario :: [Usuario] -> Integer -> IO ()
+show1Usuario [] i = return()
+show1Usuario lU cedula =
+    do
+        let cedulaU = getCedula (head lU)
+        if cedulaU == cedula then
+            do
+            showUsuario (head lU)
+            putStr "Aqui van los alquileres\n"
         else
-            separaPorComas ((tail cadena), temp ++ [(head cadena)])
+            show1Usuario (tail lU) cedula
 
-separaElementos :: [[Char]] -> [Usuario]
-separaElementos lista =
+
+separaUsuarios :: [[Char]] -> [Usuario]
+separaUsuarios lista =
     if null(lista) then []
     else
-        [crearUsuario(separaPorComas((head lista), ""))] ++ separaElementos (tail lista)
+        [crearUsuario(separaPorComas((head lista), ""))] ++ separaUsuarios (tail lista)
 
 leerArchivoUsuarios :: FilePath -> IO [Usuario]
 leerArchivoUsuarios archivo = do
     contenido <- readFile archivo
-    let usuarios = separaElementos (lines contenido)
+    let usuarios = separaUsuarios (lines contenido)
     return usuarios

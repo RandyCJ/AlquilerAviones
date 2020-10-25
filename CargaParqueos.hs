@@ -1,5 +1,7 @@
 module CargaParqueos where
 import CargaBicicletas
+import FuncionesGenerales
+
 
 -- Estructura parqueos
 type NombreParqueo = String
@@ -29,12 +31,12 @@ showParqueo parqueo lB p =
     in
         if p == "TP" then
             do
-            putStr("Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby ++ "\n")
+            putStr("\nNombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby ++ "\n")
             showBicisXParqueo lB nombre
         else
             if p == provincia then
                 do
-                putStr("Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby ++ "\n")
+                putStr("\nNombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby ++ "\n")
                 showBicisXParqueo lB nombre
             else
                 return ()
@@ -56,15 +58,6 @@ show1Parqueo lP lB nombreParqueo =
         else
             show1Parqueo (tail lP) lB nombreParqueo
 
-
-separaPorComas :: ([Char], [Char]) -> [[Char]]
-separaPorComas (cadena, temp) =
-    if cadena == "" then [temp]
-    else
-        if (head cadena) == (head ",") then
-            [temp] ++ separaPorComas ((tail cadena), "")
-        else
-            separaPorComas ((tail cadena), temp ++ [(head cadena)])
 
 separaParqueos :: [[Char]] -> [Parqueo]
 separaParqueos lista =

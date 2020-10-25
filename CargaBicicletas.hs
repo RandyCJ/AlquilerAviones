@@ -1,4 +1,5 @@
 module CargaBicicletas where
+import FuncionesGenerales
 
 -- Estructura bicicletas
 type CodigoBic = String
@@ -22,8 +23,8 @@ showBicicleta bicicleta =
     in
         putStr("Codigo: " ++ codigo ++ ", Tipo: " ++ tipo ++ ", Ubicacion: " ++ ubicacion ++ "\n")
 
-showBicicleta2 :: Bicicleta -> String -> IO ()
-showBicicleta2 bicicleta parqueo =
+showBiciParqueo :: Bicicleta -> String -> IO ()
+showBiciParqueo bicicleta parqueo =
     let
         codigo = getCodigo(bicicleta)
         tipo = getTipo(bicicleta)
@@ -45,24 +46,15 @@ showBicisXParqueo :: [Bicicleta] -> String -> IO ()
 showBicisXParqueo [] s = return()
 showBicisXParqueo listaBicicletas parqueo =
     do
-        showBicicleta2 (head listaBicicletas) parqueo
+        showBiciParqueo (head listaBicicletas) parqueo
         showBicisXParqueo (tail listaBicicletas) parqueo
 
-
-separaPorComas2 :: ([Char], [Char]) -> [[Char]]
-separaPorComas2 (cadena, temp) =
-    if cadena == "" then [temp]
-    else
-        if (head cadena) == (head ",") then
-            [temp] ++ separaPorComas2 ((tail cadena), "")
-        else
-            separaPorComas2 ((tail cadena), temp ++ [(head cadena)])
 
 separaBicicletas :: [[Char]] -> [Bicicleta]
 separaBicicletas lista =
     if null(lista) then []
     else
-        [crearBicicleta(separaPorComas2((head lista), ""))] ++ separaBicicletas (tail lista)
+        [crearBicicleta(separaPorComas((head lista), ""))] ++ separaBicicletas (tail lista)
 
 leerArchivoBicicletas :: FilePath -> IO [Bicicleta]
 leerArchivoBicicletas archivo = do
