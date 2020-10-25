@@ -29,13 +29,13 @@ showParqueo parqueo lB p =
     in
         if p == "TP" then
             do
-            print("Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby)
-            showBicicletas2 lB nombre
+            putStr("Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby ++ "\n")
+            showBicisXParqueo lB nombre
         else
             if p == provincia then
                 do
-                print("Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby)
-                showBicicletas2 lB nombre
+                putStr("Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby ++ "\n")
+                showBicisXParqueo lB nombre
             else
                 return ()
 
@@ -45,7 +45,17 @@ showParqueos lP lB p =
     do
         showParqueo (head lP) lB p
         showParqueos (tail lP) lB p
- 
+
+show1Parqueo :: [Parqueo] -> [Bicicleta] -> String -> IO ()
+show1Parqueo [] l s = return()
+show1Parqueo lP lB nombreParqueo = 
+    do
+        let parqueo = getNombreParqueo (head lP)
+        if parqueo == nombreParqueo then
+            showParqueo (head lP) lB "TP"
+        else
+            show1Parqueo (tail lP) lB nombreParqueo
+
 
 separaPorComas :: ([Char], [Char]) -> [[Char]]
 separaPorComas (cadena, temp) =

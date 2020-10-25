@@ -13,14 +13,14 @@ getTipo (Bicicleta _ tipo _) = tipo;
 getUbicacion (Bicicleta _ _ ubicacion) = ubicacion;
 
 --Muestra bicicletas
-showBicicleta :: Bicicleta -> [Char]
+showBicicleta :: Bicicleta -> IO ()
 showBicicleta bicicleta =
     let
         codigo = getCodigo(bicicleta)
         tipo = getTipo(bicicleta)
         ubicacion = getUbicacion(bicicleta)
     in
-        "Codigo: " ++ codigo ++ ", Tipo: " ++ tipo ++ ", Ubicacion: " ++ ubicacion
+        putStr("Codigo: " ++ codigo ++ ", Tipo: " ++ tipo ++ ", Ubicacion: " ++ ubicacion ++ "\n")
 
 showBicicleta2 :: Bicicleta -> String -> IO ()
 showBicicleta2 bicicleta parqueo =
@@ -30,7 +30,7 @@ showBicicleta2 bicicleta parqueo =
         ubicacion = getUbicacion(bicicleta)
     in
         if ubicacion == parqueo then
-            print("Codigo: " ++ codigo ++ ", Tipo: " ++ tipo ++ ", Ubicacion: " ++ ubicacion)
+            putStr("Codigo: " ++ codigo ++ ", Tipo: " ++ tipo ++ ", Ubicacion: " ++ ubicacion ++ "\n")
         else
             return ()
 
@@ -38,15 +38,15 @@ showBicicletas :: [Bicicleta] -> IO ()
 showBicicletas [] = return()
 showBicicletas listaBicicletas =
     do
-        print(showBicicleta (head listaBicicletas))
+        showBicicleta (head listaBicicletas)
         showBicicletas (tail listaBicicletas)
 
-showBicicletas2 :: [Bicicleta] -> String -> IO ()
-showBicicletas2 [] s = return()
-showBicicletas2 listaBicicletas parqueo =
+showBicisXParqueo :: [Bicicleta] -> String -> IO ()
+showBicisXParqueo [] s = return()
+showBicisXParqueo listaBicicletas parqueo =
     do
         showBicicleta2 (head listaBicicletas) parqueo
-        showBicicletas2 (tail listaBicicletas) parqueo
+        showBicisXParqueo (tail listaBicicletas) parqueo
 
 
 separaPorComas2 :: ([Char], [Char]) -> [[Char]]

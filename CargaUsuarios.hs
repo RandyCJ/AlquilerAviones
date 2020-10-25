@@ -11,20 +11,20 @@ getCedula (Usuario cedula _) = cedula;
 getNombreUsuario (Usuario _ nombre) = nombre;
 
 --Muestra Usuarios
-showUsuario :: Usuario -> [Char]
+showUsuario :: Usuario -> IO ()
 showUsuario usuario =
     let
         cedula = getCedula(usuario)
         nombre = getNombreUsuario(usuario)
     in
-        "Cedula: " ++ show cedula ++ ", Nombre: " ++ nombre
+        putStr ("Cedula: " ++ show cedula ++ ", Nombre: " ++ nombre ++ "\n")
 
 
 showUsuarios :: [Usuario] -> IO ()
 showUsuarios [] = return()
 showUsuarios listaUsuarios =
     do
-        print(showUsuario (head listaUsuarios))
+        showUsuario (head listaUsuarios)
         showUsuarios (tail listaUsuarios)
 
 separaPorComas :: ([Char], [Char]) -> [[Char]]

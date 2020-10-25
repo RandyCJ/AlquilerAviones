@@ -5,14 +5,14 @@ import CargaBicicletas
 
 
 cargarParqueos p b = do
-    print("1. Alajuela")
-    print("2. San Jose")
-    print("3. Heredia")
-    print("4. Cartago")
-    print("5. Puntarenas")
-    print("6. Guanacaste")
-    print("7. Limón")
-    print("8. Todas las provincias")
+    putStr "1. Alajuela\n"
+    putStr "2. San Jose\n"
+    putStr "3. Heredia\n"
+    putStr "4. Cartago\n"
+    putStr "5. Puntarenas\n"
+    putStr "6. Guanacaste\n"
+    putStr "7. Limon\n"
+    putStr "8. Todas las provincias\n"
     putStr "Indique la provincia: "
     prov <- getLine
     let provincia = (read prov :: Integer)
@@ -28,20 +28,32 @@ cargarParqueos p b = do
         8 -> showParqueos p b "TP"
     
 
-cargarBicicletas b = do
-    showBicicletas b
+cargarBicicletas p b = do
+    putStr "'#': Todas las bicicletas del sistema\n"
+    putStr "'transito': Todas las bicicletas en transito\n"
+    putStr "Tambien puede escribir el nombre de un parqueo\n"
+    putStr "Escriba su eleccion: "
+    nombreParqueo <- getLine
+
+    if nombreParqueo == "#" then
+        showBicicletas b
+    else
+        if nombreParqueo == "transito" then
+            showBicisXParqueo b "transito"
+        else
+            show1Parqueo p b nombreParqueo
 
 cargarUsuarios u = do
     showUsuarios u
 
 menuOperativo (p, b, u) =
     do
-        print("Menu Principal")
-        print("1. Mostrar parqueos")
-        print("2. Mostrar bicicletas")
-        print("3. Mostrar usuarios")
-        print("4. Estadisticas")
-        print("5. Volver")
+        putStr "Menu Principal\n"
+        putStr "1. Mostrar parqueos\n"
+        putStr "2. Mostrar bicicletas\n"
+        putStr "3. Mostrar usuarios\n"
+        putStr "4. Estadisticas\n"
+        putStr "5. Volver\n"
         putStr "Indique la opcion: "
         tempOpcion <- getLine
         let opcion = (read tempOpcion :: Integer)
@@ -51,7 +63,7 @@ menuOperativo (p, b, u) =
                 cargarParqueos p b
                 menuOperativo (p, b, u)
             2 -> do
-                cargarBicicletas b
+                cargarBicicletas p b
                 menuOperativo (p, b, u)
             3 -> do
                 cargarUsuarios u
@@ -63,10 +75,10 @@ menuOperativo (p, b, u) =
 
 menuAux (p, b, u) = 
     do
-        print("Menu Principal")
-        print("1. Opciones operativas")
-        print("2. Opciones generales")
-        print("3. Salir")
+        putStr "Menu Principal\n"
+        putStr "1. Opciones operativas\n"
+        putStr "2. Opciones generales\n"
+        putStr "3. Salir\n"
         putStr "Indique la opcion: "
         tempOpcion <- getLine
         let opcion = (read tempOpcion :: Integer)
