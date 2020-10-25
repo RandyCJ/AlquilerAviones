@@ -5,27 +5,17 @@ import CargaBicicletas
 
 
 cargarParqueos p b = do
-    putStr "\n1. Alajuela\n"
-    putStr "2. San Jose\n"
-    putStr "3. Heredia\n"
-    putStr "4. Cartago\n"
-    putStr "5. Puntarenas\n"
-    putStr "6. Guanacaste\n"
-    putStr "7. Limon\n"
-    putStr "8. Todas las provincias\n"
+    putStr "\nAL. Alajuela\n"
+    putStr "SJ. San Jose\n"
+    putStr "HE. Heredia\n"
+    putStr "CA. Cartago\n"
+    putStr "PU. Puntarenas\n"
+    putStr "GU. Guanacaste\n"
+    putStr "LI. Limon\n"
+    putStr "TP. Todas las provincias\n"
     putStr "Indique la provincia: "
     prov <- getLine
-    let provincia = (read prov :: Integer)
-
-    case provincia of
-        1 -> showParqueos p b "AL"
-        2 -> showParqueos p b "SJ"
-        3 -> showParqueos p b "HE"
-        4 -> showParqueos p b "CA"
-        5 -> showParqueos p b "PU"
-        6 -> showParqueos p b "GU"
-        7 -> showParqueos p b "LI"
-        8 -> showParqueos p b "TP"
+    showParqueos p b prov
     
 
 cargarBicicletas p b = do
