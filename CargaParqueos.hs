@@ -58,6 +58,31 @@ show1Parqueo lP lB nombreParqueo =
         else
             show1Parqueo (tail lP) lB nombreParqueo
 
+parqueoMasCercanoAux :: [Parqueo] -> [Bicicleta] -> IO ()
+parqueoMasCercanoAux lP lB = do
+    putStr "Ingrese su posicion x: "
+    pX <- getLine
+    let pXF = (read pX :: Float)
+    putStr "Ingrese su posicion y: "
+    pY <- getLine
+    let pYF = (read pY :: Float)
+    parqueoMasCercano lP lB pXF pYF 0 (head lP)
+
+parqueoMasCercano :: [Parqueo] -> [Bicicleta] -> Float -> Float -> Float -> Parqueo -> IO ()
+parqueoMasCercano [] lB _ _ distancia parqueo = showParqueo parqueo lB "TP"
+parqueoMasCercano lP lB x y distancia parqueo = do
+    let xP = getUbicacionX (head lP)
+    let yP = getUbicacionY (head lP)
+    let distanciaP = obtenerDistancia x y xP yP
+    if distancia == 0 then
+        parqueoMasCercano (tail lP) lB x y distanciaP (head lP)
+    else
+        if distanciaP < distancia then
+            parqueoMasCercano (tail lP) lB x y distanciaP (head lP)
+        else
+            parqueoMasCercano (tail lP) lB x y distancia parqueo
+
+        
 
 separaParqueos :: [[Char]] -> [Parqueo]
 separaParqueos lista =

@@ -49,7 +49,8 @@ cargarUsuarios u = do
 
 menuEstadisticas (p, b, u) =
     do
-        putStr "\n1. Top 5 usuarios con mas viajes\n"
+        putStr "\nMenu Estadisticas"
+        putStr "1. Top 5 usuarios con mas viajes\n"
         putStr "2. Top 5 parqueos con mas viajes\n"
         putStr "3. Top 3 parqueos con mas kilometros recorridos\n"
         putStr "4. Resumen\n"
@@ -75,9 +76,41 @@ menuEstadisticas (p, b, u) =
                 menuEstadisticas (p, b, u)
             5 -> return()
 
+
+menuGeneral (p, b, u) =
+    do
+        putStr "\nMenu General\n"
+        putStr "1. Consultar bicicletas\n"
+        putStr "2. Alquilar\n"
+        putStr "3. Facturar\n"
+        putStr "4. Consulta de factura\n"
+        putStr "5. Volver\n"
+        putStr "Indique la opcion: "
+        tempOpcion <- getLine
+        let opcion = (read tempOpcion :: Integer)
+        putStr "\n" 
+        case opcion of
+            1 -> do
+                parqueoMasCercanoAux p b
+                menuGeneral (p, b, u)
+            2 -> do
+                putStr "Alquilar\n"
+                menuGeneral (p, b, u)
+            3 -> do
+                putStr "Facturar\n"
+                menuGeneral (p, b, u)
+            4 -> do
+                putStr "Consulta factura\n"
+                menuGeneral (p, b, u)
+            5 -> 
+                return()
+                
+                
+            
+
 menuOperativo (p, b, u) =
     do
-        putStr "\nMenu Principal\n"
+        putStr "\nMenu Operativo\n"
         putStr "1. Mostrar parqueos\n"
         putStr "2. Mostrar bicicletas\n"
         putStr "3. Mostrar usuarios\n"
@@ -118,7 +151,7 @@ menuAux (p, b, u) =
                 menuOperativo (p, b, u)
                 menuAux (p, b, u)
             2 -> do
-                --menuGeneral (p, b, u)
+                menuGeneral (p, b, u)
                 menuAux(p, b, u)
             3 -> return ()
         
