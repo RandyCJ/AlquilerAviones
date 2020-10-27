@@ -2,7 +2,25 @@ import System.IO
 import CargaParqueos
 import CargaUsuarios
 import CargaBicicletas
+import Alquileres 
 
+nuevoAlquiler u p b = do
+    putStr "Indique numero de cedula: "
+    cedula <- getLine
+    putStr "Punto de salida:\n"
+    putStr "Ingrese su posicion x: "
+    pX <- getLine
+    let pXF = (read pX :: Float)
+    putStr "Ingrese su posicion y: "
+    pY <- getLine
+    let pYF = (read pY :: Float)
+    parqueoMasCercano p b pXF pYF 0 (head p)
+    putStr "Este es el parqueo mas cercano que se le destinara\n"
+    putStr "Indique el nombre del parqueo: "
+    parqueo <- getLine
+    putStr "Bicicletas disponibles: \n"
+    
+    
 
 cargarParqueos p b = do
     putStr "\nAL. Alajuela\n"
