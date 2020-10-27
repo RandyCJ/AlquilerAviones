@@ -2,6 +2,7 @@ import System.IO
 import CargaParqueos
 import CargaUsuarios
 import CargaBicicletas
+import Alquiler
 
 
 cargarParqueos p b = do
@@ -46,6 +47,26 @@ cargarUsuarios u = do
         let opcionInt = (read opcion :: Integer)
         show1Usuario u opcionInt
     
+
+
+solicitarCedula :: [Usuario] -> IO (Integer)
+solicitarCedula lU = do
+    putStr "\nIngrese su cedula: "
+    ced <- getLine
+    let cedInt = (read ced :: Integer)
+
+    if (verificarCedula lU cedInt) == 0 then
+        return cedInt
+    else
+        do
+        putStr "\nLa cedula que ingreso no existe, favor ingrese nuevamente"
+        solicitarCedula lU
+
+-- Desde esta funcion se piden todos los datos para el alquiler
+alquilarBici p b u = do
+    cedula <- solicitarCedula u
+    putStr ("La cedula es: " ++ show cedula)
+    return ()
 
 menuEstadisticas (p, b, u) =
     do
@@ -94,7 +115,7 @@ menuGeneral (p, b, u) =
                 parqueoMasCercanoAux p b
                 menuGeneral (p, b, u)
             2 -> do
-                putStr "Alquilar\n"
+                alquilarBici p b u
                 menuGeneral (p, b, u)
             3 -> do
                 putStr "Facturar\n"
