@@ -1,5 +1,7 @@
 module CargaParqueos where
 import CargaBicicletas
+import FuncionesGenerales
+
 
 -- Estructura parqueos
 type NombreParqueo = String
@@ -29,13 +31,13 @@ showParqueo parqueo lB p =
     in
         if p == "TP" then
             do
-            print("Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby)
-            showBicicletas2 lB nombre
+            putStr("\nNombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby ++ "\n")
+            showBicisXParqueo lB nombre
         else
             if p == provincia then
                 do
-                print("Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby)
-                showBicicletas2 lB nombre
+                putStr("\nNombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby ++ "\n")
+                showBicisXParqueo lB nombre
             else
                 return ()
 
@@ -45,16 +47,42 @@ showParqueos lP lB p =
     do
         showParqueo (head lP) lB p
         showParqueos (tail lP) lB p
- 
 
-separaPorComas :: ([Char], [Char]) -> [[Char]]
-separaPorComas (cadena, temp) =
-    if cadena == "" then [temp]
-    else
-        if (head cadena) == (head ",") then
-            [temp] ++ separaPorComas ((tail cadena), "")
+show1Parqueo :: [Parqueo] -> [Bicicleta] -> String -> IO ()
+show1Parqueo [] l s = return()
+show1Parqueo lP lB nombreParqueo = 
+    do
+        let parqueo = getNombreParqueo (head lP)
+        if parqueo == nombreParqueo then
+            showParqueo (head lP) lB "TP"
         else
-            separaPorComas ((tail cadena), temp ++ [(head cadena)])
+            show1Parqueo (tail lP) lB nombreParqueo
+
+parqueoMasCercanoAux :: [Parqueo] -> [Bicicleta] -> IO ()
+parqueoMasCercanoAux lP lB = do
+    putStr "Ingrese su posicion x: "
+    pX <- getLine
+    let pXF = (read pX :: Float)
+    putStr "Ingrese su posicion y: "
+    pY <- getLine
+    let pYF = (read pY :: Float)
+    parqueoMasCercano lP lB pXF pYF 0 (head lP)
+
+parqueoMasCercano :: [Parqueo] -> [Bicicleta] -> Float -> Float -> Float -> Parqueo -> IO ()
+parqueoMasCercano [] lB _ _ distancia parqueo = showParqueo parqueo lB "TP"
+parqueoMasCercano lP lB x y distancia parqueo = do
+    let xP = getUbicacionX (head lP)
+    let yP = getUbicacionY (head lP)
+    let distanciaP = obtenerDistancia x y xP yP
+    if distancia == 0 then
+        parqueoMasCercano (tail lP) lB x y distanciaP (head lP)
+    else
+        if distanciaP < distancia then
+            parqueoMasCercano (tail lP) lB x y distanciaP (head lP)
+        else
+            parqueoMasCercano (tail lP) lB x y distancia parqueo
+
+        
 
 separaParqueos :: [[Char]] -> [Parqueo]
 separaParqueos lista =

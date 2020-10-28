@@ -2,6 +2,7 @@ B1234,TR,Parqueo Guacima
 B1235,TR,Parqueo Guacima
 B1236,AE,Parqueo Guacima
 B1237,AE,Parqueo Guacima
+B1238,AE,en transito
 B4321,TR,Parqueo la Iglesia
 B4322,TR,Parqueo la Iglesia
 B4323,AE,Parqueo la Iglesia
