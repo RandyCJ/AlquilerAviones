@@ -49,7 +49,8 @@ cargarBicicletas p b = do
         showBicicletas b
     else
         if nombreParqueo == "transito" then
-            showBicisXParqueo b "transito"
+            showBicisXParqueo b "en transito"
+
         else
             show1Parqueo p b nombreParqueo
 
@@ -89,7 +90,7 @@ alquilarBici p b u = do
 
 menuEstadisticas (p, b, u) =
     do
-        putStr "\nMenu Estadisticas"
+        putStr "\nMenu Estadisticas\n"
         putStr "1. Top 5 usuarios con mas viajes\n"
         putStr "2. Top 5 parqueos con mas viajes\n"
         putStr "3. Top 3 parqueos con mas kilometros recorridos\n"
