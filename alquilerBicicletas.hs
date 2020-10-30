@@ -30,8 +30,9 @@ alquilarBici p b u a = do
     parqueoL <- getLine
     let codigoAlquiler = length a + 1
     let estado = "activo"
-    let parametros = [ show codigoAlquiler, estado, show cedula, parqueoS, parqueoL, bicicleta, tipo]
-    return crearAlquiler(parametros)
+    let parametros = [show codigoAlquiler, estado, show cedula, parqueoS, parqueoL, bicicleta, tipo]
+    
+    return (a ++ [crearAlquiler(parametros)])
     -- anadir alquier
     -- cambiar bicicleta a "en transito"
     -- generar archivo ??
@@ -143,7 +144,7 @@ menuGeneral (p, b, u, a) =
                 parqueoMasCercanoAux p b
                 menuGeneral (p, b, u, a)
             2 -> do
-                alquilarBici p b u a
+                a <- alquilarBici p b u a
                 menuGeneral (p, b, u, a)
             3 -> do
                 putStr "Facturar\n"
