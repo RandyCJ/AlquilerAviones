@@ -61,3 +61,22 @@ leerArchivoBicicletas archivo = do
     contenido <- readFile archivo
     let bicicletas = separaBicicletas (lines contenido)
     return bicicletas
+
+showBiciDisponible :: Bicicleta -> IO ()
+showBiciDisponible bicicleta =
+    let
+        codigo = getCodigo(bicicleta)
+        tipo = getTipo(bicicleta)
+        ubicacion = getUbicacion(bicicleta)
+    in
+        if ubicacion /= "transito" then
+            putStr("Codigo: " ++ codigo ++ ", Tipo: " ++ tipo ++ ", Ubicacion: " ++ ubicacion ++ "\n")
+        else
+            return ()
+
+showBicisDisponibles :: [Bicicleta] -> IO ()
+showBicisDisponibles [] = return()
+showBicisDisponibles listaBicicletas =
+    do
+        showBiciDisponible (head listaBicicletas)
+        showBicisDisponibles (tail listaBicicletas)

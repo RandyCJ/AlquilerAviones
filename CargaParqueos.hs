@@ -96,3 +96,20 @@ leerArchivoParqueos archivo = do
     let parqueos = separaParqueos (lines contenido)
     return parqueos
 
+showParqueoSOLO :: Parqueo -> IO ()
+showParqueoSOLO parqueo =
+    let
+        nombre = getNombreParqueo(parqueo)
+        direccion = getDireccionParqueo(parqueo)
+        provincia = getProvinciaParqueo(parqueo)
+        ubx = getUbicacionX(parqueo)
+        uby = getUbicacionY(parqueo)
+    in
+        putStr("Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby ++ "\n")
+       
+showParqueosSOLOS :: [Parqueo] -> IO ()
+showParqueosSOLOS [] = return()
+showParqueosSOLOS lP =
+    do
+        showParqueoSOLO (head lP)
+        showParqueosSOLOS (tail lP)
