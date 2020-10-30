@@ -36,10 +36,9 @@ show1Usuario lU cedula =
         if cedulaU == cedula then
             do
             showUsuario (head lU)
-            putStr "Aqui van los alquileres\n"
+            putStr "Alquileres\n"
         else
             show1Usuario (tail lU) cedula
-
 
 separaUsuarios :: [[Char]] -> [Usuario]
 separaUsuarios lista =

@@ -2,27 +2,32 @@ import System.IO
 import CargaParqueos
 import CargaUsuarios
 import CargaBicicletas
-import Alquiler
+import Alquileres
+import FuncionesGenerales
+import Estadisticas
+import Data.List
 
- 
 
-nuevoAlquiler u p b = do
-    putStr "Indique numero de cedula: "
-    cedula <- getLine
-    putStr "Punto de salida:\n"
-    putStr "Ingrese su posicion x: "
-    pX <- getLine
-    let pXF = (read pX :: Float)
-    putStr "Ingrese su posicion y: "
-    pY <- getLine
-    let pYF = (read pY :: Float)
-    parqueoMasCercano p b pXF pYF 0 (head p)
-    putStr "Este es el parqueo mas cercano que se le destinara\n"
-    putStr "Indique el nombre del parqueo: "
-    parqueo <- getLine
-    putStr "Bicicletas disponibles: \n"
-    
+
+alquilarBici p b u a = do
+    cedula <- solicitarCedula u
+    parqueoObjeto <- parqueoMasCercanoAux p b
+    putStr "Este es el parqueo mas cercano de salida\n"
+    putStr "\nIndique el codigo de la bici de su preferencia:"
+    bicicleta <- getLine
+    let biciObjeto = getBicicleta bicicleta b
+    putStr "\nParqueos de llegada:\n"
+    showParqueosSOLOS p
+    putStr "\nSeleccione el parqueo de llegada (Con el nombre): \n"
+    parqueoL <- getLine
+    let codigoAlquiler = length a + 1
+    let parametros = [show codigoAlquiler, "activo", show cedula, getNombreParqueo parqueoObjeto, parqueoL, bicicleta, getTipo biciObjeto]
+    let listaNuevaAlquiler = a ++ [crearAlquiler(parametros)]
+    let listaNuevaBicicleta = cambiarUbicacion b biciObjeto
+
+    return (p,listaNuevaBicicleta,u,listaNuevaAlquiler)
    
+
 
 cargarParqueos p b = do
     putStr "\nAL. Alajuela\n"
@@ -54,7 +59,7 @@ cargarBicicletas p b = do
         else
             show1Parqueo p b nombreParqueo
 
-cargarUsuarios u = do
+cargarUsuarios u a = do
     putStr "\nIngrese '#' para ver la informacion de todos los clientes\n"
     putStr "Ingrese una cedula para ver historial de alquileres de un cliente\n"
     putStr "Eleccion: "
@@ -64,31 +69,12 @@ cargarUsuarios u = do
         showUsuarios u
     else
         do
-        let opcionInt = (read opcion :: Integer)
-        show1Usuario u opcionInt
+        let cedula = (read opcion :: Integer)
+        show1Usuario u cedula
+        showAlquileresXUsuario a cedula
     
 
-
-solicitarCedula :: [Usuario] -> IO (Integer)
-solicitarCedula lU = do
-    putStr "\nIngrese su cedula: "
-    ced <- getLine
-    let cedInt = (read ced :: Integer)
-
-    if (verificarCedula lU cedInt) == 0 then
-        return cedInt
-    else
-        do
-        putStr "\nLa cedula que ingreso no existe, favor ingrese nuevamente"
-        solicitarCedula lU
-
--- Desde esta funcion se piden todos los datos para el alquiler
-alquilarBici p b u = do
-    cedula <- solicitarCedula u
-    putStr ("La cedula es: " ++ show cedula)
-    return ()
-
-menuEstadisticas (p, b, u) =
+menuEstadisticas (p, b, u, a) =
     do
         putStr "\nMenu Estadisticas\n"
         putStr "1. Top 5 usuarios con mas viajes\n"
@@ -103,22 +89,21 @@ menuEstadisticas (p, b, u) =
 
         case opcionInt of
             1 -> do
-                putStr "Se muestra el TOP usuarios\n"
-                menuEstadisticas (p, b, u)
-            2 -> 
-                do
-                putStr "Se muestra el TOP parqueos\n"
-                menuEstadisticas (p, b, u)
+                topUsuarios u a
+                menuEstadisticas (p, b, u, a)
+            2 -> do
+                topParqueos p a
+                menuEstadisticas (p, b, u, a)
             3 -> do
-                putStr "Se muestra el TOP bicicletas\n"
-                menuEstadisticas (p, b, u)
+                topBicicletas b a p
+                menuEstadisticas (p, b, u, a)
             4 -> do
                 putStr "Se muestra el resumen\n"
-                menuEstadisticas (p, b, u)
+                menuEstadisticas (p, b, u, a)
             5 -> return()
 
 
-menuGeneral (p, b, u) =
+menuGeneral (p, b, u, a) =
     do
         putStr "\nMenu General\n"
         putStr "1. Consultar bicicletas\n"
@@ -133,23 +118,21 @@ menuGeneral (p, b, u) =
         case opcion of
             1 -> do
                 parqueoMasCercanoAux p b
-                menuGeneral (p, b, u)
+                menuGeneral (p, b, u, a)
             2 -> do
-                alquilarBici p b u
-                menuGeneral (p, b, u)
+                tupla <- alquilarBici p b u a
+                menuGeneral (p, getBicis tupla, u, getAlquileres tupla)
             3 -> do
                 putStr "Facturar\n"
-                menuGeneral (p, b, u)
+                menuGeneral (p, b, u, a)
             4 -> do
                 putStr "Consulta factura\n"
-                menuGeneral (p, b, u)
+                menuGeneral (p, b, u, a)
             5 -> 
-                return()
-                
-                
-            
+                return(p, b, u, a)
 
-menuOperativo (p, b, u) =
+
+menuOperativo (p, b, u, a) =
     do
         putStr "\nMenu Operativo\n"
         putStr "1. Mostrar parqueos\n"
@@ -164,20 +147,24 @@ menuOperativo (p, b, u) =
         case opcion of
             1 -> do
                 cargarParqueos p b
-                menuOperativo (p, b, u)
+                menuOperativo (p, b, u, a)
             2 -> do
                 cargarBicicletas p b
-                menuOperativo (p, b, u)
+                menuOperativo (p, b, u, a)
             3 -> do
-                cargarUsuarios u
-                menuOperativo (p, b, u)
+                cargarUsuarios u a
+                menuOperativo (p, b, u, a)
             4 -> do
-                menuEstadisticas (p, b, u)
-                menuOperativo (p, b, u)
-            5 -> return ()
+                menuEstadisticas (p, b, u, a)
+                menuOperativo (p, b, u, a)
+            5 -> return (p, b, u, a)
+            6 -> do
+                showAlquileres a
+                menuOperativo (p, b, u, a)
 
 
-menuAux (p, b, u) = 
+
+menuAux (p, b, u, a) = 
     do
         putStr "\nMenu Principal\n"
         putStr "1. Opciones operativas\n"
@@ -189,13 +176,18 @@ menuAux (p, b, u) =
 
         case opcion of
             1 -> do 
-                menuOperativo (p, b, u)
-                menuAux (p, b, u)
+                tupla <- menuOperativo (p, b, u, a)
+                menuAux(getParqueos tupla, getBicis tupla, getUsuarios tupla, getAlquileres tupla)
             2 -> do
-                menuGeneral (p, b, u)
-                menuAux(p, b, u)
+                tupla <- menuGeneral (p, b, u, a)
+                menuAux(getParqueos tupla, getBicis tupla, getUsuarios tupla, getAlquileres tupla)
             3 -> return ()
-        
+
+
+getBicis(_, b, _, _) = b
+getAlquileres(_, _, _, a) = a
+getUsuarios(_, _, u, _) = u
+getParqueos(p, _, _, _) = p
 
 main = do
     putStr ("Indique la ruta de los parqueos: ")
@@ -209,7 +201,15 @@ main = do
     putStr ("Indique la ruta de los usuarios: ")
     ruta <- getLine
     usuarios <- leerArchivoUsuarios ruta
+    
+    alquileres <- leerArchivoAlquileres "al.txt"
 
-    temp <- menuAux (parqueos, bicicletas, usuarios)
+    temp <- menuAux (parqueos, bicicletas, usuarios, alquileres)
     return temp
 
+
+escribirArchivo :: String -> String -> IO ()
+escribirArchivo ruta lista = do
+    writeFile ruta lista
+    return ()
+--appendFile ruta "\n"

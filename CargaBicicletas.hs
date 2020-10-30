@@ -61,3 +61,46 @@ leerArchivoBicicletas archivo = do
     contenido <- readFile archivo
     let bicicletas = separaBicicletas (lines contenido)
     return bicicletas
+
+showBiciDisponible :: Bicicleta -> IO ()
+showBiciDisponible bicicleta =
+    let
+        codigo = getCodigo(bicicleta)
+        tipo = getTipo(bicicleta)
+        ubicacion = getUbicacion(bicicleta)
+    in
+        if ubicacion /= "transito" then
+            putStr("Codigo: " ++ codigo ++ ", Tipo: " ++ tipo ++ ", Ubicacion: " ++ ubicacion ++ "\n")
+        else
+            return ()
+
+showBicisDisponibles :: [Bicicleta] -> IO ()
+showBicisDisponibles [] = return()
+showBicisDisponibles listaBicicletas =
+    do
+        showBiciDisponible (head listaBicicletas)
+        showBicisDisponibles (tail listaBicicletas)
+
+
+getBicicleta :: String -> [Bicicleta] -> Bicicleta
+getBicicleta codBici lB = do
+    let codBicicleta = getCodigo (head lB)
+
+    if codBicicleta == codBici then
+        head lB
+    else
+        getBicicleta codBici (tail lB)
+
+
+cambiarUbicacion :: [Bicicleta] -> Bicicleta -> [Bicicleta]
+cambiarUbicacion lB bicicleta = do
+    let codigoBici = getCodigo (head lB)
+    let codBici = getCodigo (bicicleta)
+
+    if codBici == codigoBici then
+        do
+            let tipoBici = getTipo (bicicleta)
+            let nuevaBici = crearBicicleta([codBici, tipoBici, "en transito"])
+            [nuevaBici] ++ (tail lB)
+    else
+        [head lB] ++ cambiarUbicacion (tail lB) bicicleta
