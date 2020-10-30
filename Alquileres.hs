@@ -32,4 +32,17 @@ getParqueoLlegada (Alquiler _ _ _ _ parqueo _ _ ) = parqueo;
 getCodigoBici (Alquiler _ _ _ _ _ codigoBici _  ) = codigoBici;
 getTipoBici (Alquiler _ _ _ _ _ _ tipoBici ) = tipoBici;
 
+showAlquiler :: Alquiler -> IO ()
+showAlquiler alquiler =
+    let
+        id = getIdentificador(alquiler)
+        estado = getEstado(alquiler)
+        cedUsuario = getCedulaUsuario(alquiler)
+        parqueoSalida = getParqueoSalida(alquiler)
+        parqueoLlegada = getParqueoLlegada(alquiler)
+        codigoBici = getCodigoBici(alquiler)
+        tipoBici = getTipoBici(alquiler)
+    in
+        putStr("ID: " ++ show id ++ ", estado: " ++ estado ++ ", cedUsuario: " ++ show cedUsuario ++ ", PL: " ++ parqueoLlegada ++ ", PS: " ++ parqueoSalida ++ ", Bici" ++ codigoBici ++ ", Tipo: " ++ tipoBici ++ "\n")
+
 
