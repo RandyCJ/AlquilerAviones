@@ -4,6 +4,7 @@ import CargaUsuarios
 import CargaBicicletas
 import Alquileres
 import FuncionesGenerales
+import Estadisticas
 import Data.List
 
 
@@ -57,7 +58,7 @@ cargarBicicletas p b = do
         else
             show1Parqueo p b nombreParqueo
 
-cargarUsuarios u = do
+cargarUsuarios u a = do
     putStr "\nIngrese '#' para ver la informacion de todos los clientes\n"
     putStr "Ingrese una cedula para ver historial de alquileres de un cliente\n"
     putStr "Eleccion: "
@@ -67,27 +68,14 @@ cargarUsuarios u = do
         showUsuarios u
     else
         do
-        let opcionInt = (read opcion :: Integer)
-        show1Usuario u opcionInt
+        let cedula = (read opcion :: Integer)
+        show1Usuario u cedula
+        showAlquileresXUsuario a cedula
     
-
-
-solicitarCedula :: [Usuario] -> IO (Integer)
-solicitarCedula lU = do
-    putStr "\nIngrese su cedula: "
-    ced <- getLine
-    let cedInt = (read ced :: Integer)
-
-    if (verificarCedula lU cedInt) == 0 then
-        return cedInt
-    else
-        do
-        putStr "\nLa cedula que ingreso no existe, favor ingrese nuevamente"
-        solicitarCedula lU
 
 menuEstadisticas (p, b, u, a) =
     do
-        putStr "\nMenu Estadisticas"
+        putStr "\nMenu Estadisticas\n"
         putStr "1. Top 5 usuarios con mas viajes\n"
         putStr "2. Top 5 parqueos con mas viajes\n"
         putStr "3. Top 3 parqueos con mas kilometros recorridos\n"
@@ -100,14 +88,13 @@ menuEstadisticas (p, b, u, a) =
 
         case opcionInt of
             1 -> do
-                putStr "Se muestra el TOP usuarios\n"
+                topUsuarios u a
                 menuEstadisticas (p, b, u, a)
-            2 -> 
-                do
-                putStr "Se muestra el TOP parqueos\n"
+            2 -> do
+                topParqueos p a
                 menuEstadisticas (p, b, u, a)
             3 -> do
-                putStr "Se muestra el TOP bicicletas\n"
+                topBicicletas b a p
                 menuEstadisticas (p, b, u, a)
             4 -> do
                 putStr "Se muestra el resumen\n"
@@ -164,12 +151,16 @@ menuOperativo (p, b, u, a) =
                 cargarBicicletas p b
                 menuOperativo (p, b, u, a)
             3 -> do
-                cargarUsuarios u
+                cargarUsuarios u a
                 menuOperativo (p, b, u, a)
             4 -> do
                 menuEstadisticas (p, b, u, a)
                 menuOperativo (p, b, u, a)
             5 -> return (p, b, u, a)
+            6 -> do
+                showAlquileres a
+                menuOperativo (p, b, u, a)
+
 
 
 menuAux (p, b, u, a) = 
@@ -209,12 +200,15 @@ main = do
     putStr ("Indique la ruta de los usuarios: ")
     ruta <- getLine
     usuarios <- leerArchivoUsuarios ruta
+    
+    alquileres <- leerArchivoAlquileres "al.txt"
 
-    temp <- menuAux (parqueos, bicicletas, usuarios, [])
+    temp <- menuAux (parqueos, bicicletas, usuarios, alquileres)
     return temp
 
 
-escribirArchivo :: String -> [String] -> IO ()
+escribirArchivo :: String -> String -> IO ()
 escribirArchivo ruta lista = do
-appendFile ruta . intercalate "," . map show $ lista
-appendFile ruta "\n"
+    writeFile ruta lista
+    return ()
+--appendFile ruta "\n"
