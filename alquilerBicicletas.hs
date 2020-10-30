@@ -3,8 +3,10 @@ import CargaParqueos
 import CargaUsuarios
 import CargaBicicletas
 import Alquileres
+import FuncionesGenerales
+import Data.List
 
- 
+
 
 alquilarBici p b u a = do
     cedula <- solicitarCedula u
@@ -31,14 +33,11 @@ alquilarBici p b u a = do
     let codigoAlquiler = length a + 1
     let estado = "activo"
     let parametros = [show codigoAlquiler, estado, show cedula, parqueoS, parqueoL, bicicleta, tipo]
-    
+    escribirArchivo "al.txt" parametros
+    putStr "\n Alquiler añadido con éxito! \n"
     return (a ++ [crearAlquiler(parametros)])
-    -- anadir alquier
-    -- cambiar bicicleta a "en transito"
-    -- generar archivo ??
-    -- putStr "\n Alquiler añadido con éxito! \n"
     
-   
+
 
 cargarParqueos p b = do
     putStr "\nAL. Alajuela\n"
@@ -204,6 +203,8 @@ menuAux (p, b, u, a) =
                 menuGeneral (p, b, u, a)
                 menuAux(p, b, u, a)
             3 -> return ()
+
+
         
 
 main = do
@@ -222,3 +223,8 @@ main = do
     temp <- menuAux (parqueos, bicicletas, usuarios, [])
     return temp
 
+
+escribirArchivo :: String -> [String] -> IO ()
+escribirArchivo ruta lista = do
+appendFile ruta . intercalate "," . map show $ lista
+appendFile ruta "\n"

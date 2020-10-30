@@ -12,6 +12,7 @@ verificarCedula lU cedula = do
         verificarCedula (tail lU) cedula
 
 
+
 -- Estructura Alquiler
 type Identificador = Integer
 type Estado = String
