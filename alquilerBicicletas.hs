@@ -54,7 +54,8 @@ cargarBicicletas p b = do
         showBicicletas b
     else
         if nombreParqueo == "transito" then
-            showBicisXParqueo b "transito"
+            showBicisXParqueo b "en transito"
+
         else
             show1Parqueo p b nombreParqueo
 

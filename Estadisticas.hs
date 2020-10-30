@@ -56,8 +56,8 @@ obtenerTOPUsuarios lU lA lTOP = do
     else
         do
         let listaTOP = insertarOrdenado lTOP [nombreUsuario, show cantidad]
-        obtenerTOPUsuarios (tail lU) lA listaTOP
-        
+        obtenerTOPUsuarios (tail lU) lA listaTOP        
+
 
 obtenerAlquileresXUsuario :: Usuario -> [Alquiler] -> Integer -> Integer
 obtenerAlquileresXUsuario usuario [] cantidad = cantidad
@@ -65,7 +65,7 @@ obtenerAlquileresXUsuario usuario lA cantidad = do
     let 
         cedula = getCedula usuario
         cedulaAlquiler = getCedulaUsuario (head lA)
-
+        
     if cedula == cedulaAlquiler then
         obtenerAlquileresXUsuario usuario (tail lA) (cantidad + 1)
     else
