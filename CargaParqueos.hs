@@ -58,7 +58,7 @@ show1Parqueo lP lB nombreParqueo =
         else
             show1Parqueo (tail lP) lB nombreParqueo
 
-parqueoMasCercanoAux :: [Parqueo] -> [Bicicleta] -> IO ()
+parqueoMasCercanoAux :: [Parqueo] -> [Bicicleta] -> IO Parqueo
 parqueoMasCercanoAux lP lB = do
     putStr "Ingrese su posicion x: "
     pX <- getLine
@@ -66,10 +66,14 @@ parqueoMasCercanoAux lP lB = do
     putStr "Ingrese su posicion y: "
     pY <- getLine
     let pYF = (read pY :: Float)
-    parqueoMasCercano lP lB pXF pYF 0 (head lP)
+    temp <- parqueoMasCercano lP lB pXF pYF 0 (head lP)
+    return temp
 
-parqueoMasCercano :: [Parqueo] -> [Bicicleta] -> Float -> Float -> Float -> Parqueo -> IO ()
-parqueoMasCercano [] lB _ _ distancia parqueo = showParqueo parqueo lB "TP"
+parqueoMasCercano :: [Parqueo] -> [Bicicleta] -> Float -> Float -> Float -> Parqueo -> IO Parqueo
+parqueoMasCercano [] lB _ _ distancia parqueo = do 
+    showParqueo parqueo lB "TP"
+    return parqueo
+
 parqueoMasCercano lP lB x y distancia parqueo = do
     let xP = getUbicacionX (head lP)
     let yP = getUbicacionY (head lP)
@@ -113,3 +117,13 @@ showParqueosSOLOS lP =
     do
         showParqueoSOLO (head lP)
         showParqueosSOLOS (tail lP)
+
+getParqueo :: String -> [Parqueo] -> Parqueo
+getParqueo nombreParqueo lP = do
+    let nombre = getNombreParqueo (head lP)
+
+    if nombreParqueo == nombre then
+        head lP
+    else
+        getParqueo nombreParqueo (tail lP)
+        

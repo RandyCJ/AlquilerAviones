@@ -80,3 +80,27 @@ showBicisDisponibles listaBicicletas =
     do
         showBiciDisponible (head listaBicicletas)
         showBicisDisponibles (tail listaBicicletas)
+
+
+getBicicleta :: String -> [Bicicleta] -> Bicicleta
+getBicicleta codBici lB = do
+    let codBicicleta = getCodigo (head lB)
+
+    if codBicicleta == codBici then
+        head lB
+    else
+        getBicicleta codBici (tail lB)
+
+
+cambiarUbicacion :: [Bicicleta] -> Bicicleta -> [Bicicleta]
+cambiarUbicacion lB bicicleta = do
+    let codigoBici = getCodigo (head lB)
+    let codBici = getCodigo (bicicleta)
+
+    if codBici == codigoBici then
+        do
+            let tipoBici = getTipo (bicicleta)
+            let nuevaBici = crearBicicleta([codBici, tipoBici, "en transito"])
+            [nuevaBici] ++ (tail lB)
+    else
+        [head lB] ++ cambiarUbicacion (tail lB) bicicleta
