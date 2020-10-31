@@ -205,7 +205,7 @@ main = do
     
     alquileres <- leerArchivoAlquileres "al.txt"
 
-    temp <- menuAux (parqueos, cletasgit , usuarios, alquileres)
+    temp <- menuAux (parqueos, cletas , usuarios, alquileres)
     return temp
 
 
