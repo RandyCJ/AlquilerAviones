@@ -197,6 +197,7 @@ main = do
     putStr ("Indique la ruta de las bicicletas: ")
     ruta <- getLine
     bicicletas <- leerArchivoBicicletas ruta
+    let cletas = existeParqueo bicicletas parqueos
 
     putStr ("Indique la ruta de los usuarios: ")
     ruta <- getLine
@@ -204,7 +205,7 @@ main = do
     
     alquileres <- leerArchivoAlquileres "al.txt"
 
-    temp <- menuAux (parqueos, bicicletas, usuarios, alquileres)
+    temp <- menuAux (parqueos, cletasgit , usuarios, alquileres)
     return temp
 
 
