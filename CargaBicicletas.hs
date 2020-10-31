@@ -1,5 +1,6 @@
 module CargaBicicletas where
 import FuncionesGenerales
+import System.IO
 
 
 -- Estructura bicicletas
@@ -59,8 +60,10 @@ separaBicicletas lista =
 
 leerArchivoBicicletas :: FilePath -> IO [Bicicleta]
 leerArchivoBicicletas archivo = do
-    contenido <- readFile archivo
+    file <- openFile archivo ReadWriteMode
+    contenido <- hGetContents file
     let bicicletas = separaBicicletas (lines contenido)
+    putStr (contenido)
     return bicicletas
 
 showBiciDisponible :: Bicicleta -> IO ()
@@ -105,3 +108,18 @@ cambiarUbicacion lB bicicleta = do
             [nuevaBici] ++ (tail lB)
     else
         [head lB] ++ cambiarUbicacion (tail lB) bicicleta
+    
+bicisAString :: [Bicicleta] -> String -> String
+bicisAString [] s = s
+bicisAString lB string = do
+    let codigo = getCodigo (head lB)
+    let tipo = getTipo (head lB)
+    let ubicacion = getUbicacion (head lB)
+    let nuevaBici = codigo ++ "," ++ tipo ++ "," ++ ubicacion ++ "\n"
+
+    bicisAString (tail lB) (string ++ nuevaBici)
+
+escribirNuevosDatos :: String -> String -> IO ()
+escribirNuevosDatos ruta datos = do
+    writeFile ruta datos
+    return ()

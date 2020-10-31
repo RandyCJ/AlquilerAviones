@@ -76,10 +76,12 @@ separaAlquileres lista =
 
 leerArchivoAlquileres :: FilePath -> IO [Alquiler]
 leerArchivoAlquileres archivo = do
-    hdl <- openFile archivo ReadMode
-    contenido <- hGetContents hdl
+    file <- openFile archivo ReadWriteMode
+    contenido <- hGetContents file
     let alquileres = separaAlquileres (lines contenido)
-    escribirArchivo "alqui.txt" contenido
+
+    putStr (contenido ++ "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    --escribirArchivo "al.txt" contenido
     return alquileres
 
 escribirArchivo :: String -> String -> IO ()
@@ -87,6 +89,11 @@ escribirArchivo ruta lista = do
     writeFile ruta lista
     return ()
 
+agregarAlquiler :: String -> IO ()
+agregarAlquiler alquiler = do
+    appendFile "al.txt" (alquiler ++ "\n")
+    return ()
+    
 
 showAlquileresXUsuario :: [Alquiler] -> Integer -> IO ()
 showAlquileresXUsuario [] c = return ()

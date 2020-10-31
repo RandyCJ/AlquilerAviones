@@ -9,7 +9,7 @@ import Data.List
 
 
 
-alquilarBici p b u a = do
+alquilarBici p b u a rutaB bA = do
     cedula <- solicitarCedula u
     parqueoObjeto <- parqueoMasCercanoAux p b
     putStr "Este es el parqueo mas cercano de salida\n"
@@ -23,13 +23,14 @@ alquilarBici p b u a = do
     let codigoAlquiler = length a + 1
     let parametros = [show codigoAlquiler, "activo", show cedula, getNombreParqueo parqueoObjeto, parqueoL, bicicleta, getTipo biciObjeto]
     let stringParametros = (show codigoAlquiler ++ "," ++ "activo" ++ "," ++ show cedula ++ "," ++ getNombreParqueo parqueoObjeto ++ "," ++ parqueoL ++ "," ++ bicicleta ++ "," ++ parametros!!6)
-    appendArchivo "alqui.txt" stringParametros
+    agregarAlquiler stringParametros
     let listaNuevaAlquiler = a ++ [crearAlquiler(parametros)]
     let listaNuevaBicicleta = cambiarUbicacion b biciObjeto
-
-    return (p,listaNuevaBicicleta,u,listaNuevaAlquiler)
+    let listaBicisArchivo = cambiarUbicacion bA biciObjeto
+    let archivoBicis = bicisAString listaBicisArchivo ""
+    escribirNuevosDatos rutaB archivoBicis
+    return (p,listaNuevaBicicleta,u,listaNuevaAlquiler, listaBicisArchivo)
    
-
 
 cargarParqueos p b = do
     putStr "\nAL. Alajuela\n"
@@ -100,17 +101,12 @@ menuEstadisticas (p, b, u, a) =
                 topBicicletas b a p
                 menuEstadisticas (p, b, u, a)
             4 -> do
-                putStr "Total de viajes: "
-                let viajes = length a 
-                putStr (show viajes )
-                putStr "Total de Kilometros: "
-                let kilometros = totalkilometros b p a 0
-                --putStr (show kilometros)
+                putStr "Se muestra el resumen\n"
                 menuEstadisticas (p, b, u, a)
             5 -> return()
 
 
-menuGeneral (p, b, u, a) =
+menuGeneral (p, b, u, a, rutaB, bA) =
     do
         putStr "\nMenu General\n"
         putStr "1. Consultar bicicletas\n"
@@ -125,18 +121,18 @@ menuGeneral (p, b, u, a) =
         case opcion of
             1 -> do
                 parqueoMasCercanoAux p b
-                menuGeneral (p, b, u, a)
+                menuGeneral (p, b, u, a, rutaB, bA)
             2 -> do
-                tupla <- alquilarBici p b u a
-                menuGeneral (p, getBicis tupla, u, getAlquileres tupla)
+                tupla <- alquilarBici p b u a rutaB bA
+                menuGeneral (p, getBicis tupla, u, getAlquileres tupla, rutaB, getBicisArchivo tupla)
             3 -> do
                 putStr "Facturar\n"
-                menuGeneral (p, b, u, a)
+                menuGeneral (p, b, u, a, rutaB, bA)
             4 -> do
                 putStr "Consulta factura\n"
-                menuGeneral (p, b, u, a)
+                menuGeneral (p, b, u, a, rutaB, bA)
             5 -> 
-                return(p, b, u, a)
+                return(p, b, u, a, bA)
 
 
 menuOperativo (p, b, u, a) =
@@ -164,14 +160,14 @@ menuOperativo (p, b, u, a) =
             4 -> do
                 menuEstadisticas (p, b, u, a)
                 menuOperativo (p, b, u, a)
-            5 -> return (p, b, u, a)
+            5 -> return ()
             6 -> do
                 showAlquileres a
                 menuOperativo (p, b, u, a)
 
 
 
-menuAux (p, b, u, a) = 
+menuAux (p, b, u, a, rutaB, bA) = 
     do
         putStr "\nMenu Principal\n"
         putStr "1. Opciones operativas\n"
@@ -183,46 +179,34 @@ menuAux (p, b, u, a) =
 
         case opcion of
             1 -> do 
-                tupla <- menuOperativo (p, b, u, a)
-                menuAux(getParqueos tupla, getBicis tupla, getUsuarios tupla, getAlquileres tupla)
+                menuOperativo (p, b, u, a)
+                menuAux(p, b, u, a, rutaB, bA)
             2 -> do
-                tupla <- menuGeneral (p, b, u, a)
-                menuAux(getParqueos tupla, getBicis tupla, getUsuarios tupla, getAlquileres tupla)
+                tupla <- menuGeneral (p, b, u, a, rutaB, bA)
+                menuAux(getParqueos tupla, getBicis tupla, getUsuarios tupla, getAlquileres tupla, rutaB, getBicisArchivo tupla)
             3 -> return ()
 
-
-getBicis(_, b, _, _) = b
-getAlquileres(_, _, _, a) = a
-getUsuarios(_, _, u, _) = u
-getParqueos(p, _, _, _) = p
+getParqueos(p, _, _, _, _) = p
+getBicis(_, b, _, _, _) = b
+getUsuarios(_, _, u, _, _) = u
+getAlquileres(_, _, _, a, _) = a
+getBicisArchivo (_, _, _, _, bA) = bA
 
 main = do
     putStr ("Indique la ruta de los parqueos: ")
     ruta <- getLine
     parqueos <- leerArchivoParqueos ruta
 
-    putStr ("Indique la ruta de las bicicletas: ")
-    ruta <- getLine
-    bicicletas <- leerArchivoBicicletas ruta
-
     putStr ("Indique la ruta de los usuarios: ")
     ruta <- getLine
     usuarios <- leerArchivoUsuarios ruta
+
+    putStr ("Indique la ruta de las bicicletas: ")
+    rutaB <- getLine
+    bicicletasArchivo <- leerArchivoBicicletas rutaB
+    let cletas = existeParqueo bicicletasArchivo parqueos
     
     alquileres <- leerArchivoAlquileres "al.txt"
 
-    temp <- menuAux (parqueos, bicicletas, usuarios, alquileres)
+    temp <- menuAux (parqueos, cletas, usuarios, alquileres, rutaB, bicicletasArchivo)
     return temp
-
-
-appendArchivo :: String -> String -> IO ()
-appendArchivo ruta lista = do
-    appendFile ruta lista
-    return ()
---appendFile ruta "\n"
-
-
-
-
-
-     

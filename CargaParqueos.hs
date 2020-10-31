@@ -126,4 +126,26 @@ getParqueo nombreParqueo lP = do
         head lP
     else
         getParqueo nombreParqueo (tail lP)
-        
+            
+existeParqueo :: [Bicicleta] -> [Parqueo] -> [Bicicleta]
+existeParqueo [] lP = []
+existeParqueo lB lP = do
+    let nombrePBici = getUbicacion (head lB)
+
+    if nombrePBici == "en transito" then
+        [head lB] ++ existeParqueo (tail lB) lP
+    else
+        if (existeParqueoAux nombrePBici lP) == 0 then
+            [head lB] ++ existeParqueo (tail lB) lP
+        else
+            existeParqueo (tail lB) lP
+
+existeParqueoAux :: String -> [Parqueo] -> Integer
+existeParqueoAux s [] = 1
+existeParqueoAux nombreParqueoBici lP = do
+    let nombreParqueo = getNombreParqueo (head lP)
+
+    if nombreParqueoBici == nombreParqueo then
+        0
+    else
+        existeParqueoAux nombreParqueoBici (tail lP)

@@ -1,9 +1,11 @@
 B1234,TR,Parqueo Guacima
 B1235,TR,Parqueo Guacima
 B1236,AE,Parqueo Guacima
-B1237,AE,Parqueo Guacima
+B1237,AE,en transito
 B1238,AE,en transito
 B4321,TR,Parqueo la Iglesia
 B4322,TR,Parqueo la Iglesia
 B4323,AE,Parqueo la Iglesia
-B4324,AE,Parqueo la Iglesia
+B4324,AE,en transito
+B9191,TR,Parqueo el Llano
+B9192,AE,Parqueo la Agonia
