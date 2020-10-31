@@ -1,6 +1,7 @@
 module CargaBicicletas where
 import FuncionesGenerales
 
+
 -- Estructura bicicletas
 type CodigoBic = String
 type TipoBic = String

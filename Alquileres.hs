@@ -1,6 +1,7 @@
 module Alquileres where
 import CargaUsuarios
 import FuncionesGenerales
+import System.IO
 
 
 solicitarCedula :: [Usuario] -> IO (Integer)
@@ -72,11 +73,20 @@ separaAlquileres lista =
     else
         [crearAlquiler(separaPorComas((head lista), ""))] ++ separaAlquileres (tail lista)
 
+
 leerArchivoAlquileres :: FilePath -> IO [Alquiler]
 leerArchivoAlquileres archivo = do
-    contenido <- readFile archivo
+    hdl <- openFile archivo ReadMode
+    contenido <- hGetContents hdl
     let alquileres = separaAlquileres (lines contenido)
+    escribirArchivo "alqui.txt" contenido
     return alquileres
+
+escribirArchivo :: String -> String -> IO ()
+escribirArchivo ruta lista = do
+    writeFile ruta lista
+    return ()
+
 
 showAlquileresXUsuario :: [Alquiler] -> Integer -> IO ()
 showAlquileresXUsuario [] c = return ()

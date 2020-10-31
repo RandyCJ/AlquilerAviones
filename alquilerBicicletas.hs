@@ -22,6 +22,8 @@ alquilarBici p b u a = do
     parqueoL <- getLine
     let codigoAlquiler = length a + 1
     let parametros = [show codigoAlquiler, "activo", show cedula, getNombreParqueo parqueoObjeto, parqueoL, bicicleta, getTipo biciObjeto]
+    let stringParametros = (show codigoAlquiler ++ "," ++ "activo" ++ "," ++ show cedula ++ "," ++ getNombreParqueo parqueoObjeto ++ "," ++ parqueoL ++ "," ++ bicicleta ++ "," ++ parametros!!6)
+    appendArchivo "alqui.txt" stringParametros
     let listaNuevaAlquiler = a ++ [crearAlquiler(parametros)]
     let listaNuevaBicicleta = cambiarUbicacion b biciObjeto
 
@@ -208,8 +210,14 @@ main = do
     return temp
 
 
-escribirArchivo :: String -> String -> IO ()
-escribirArchivo ruta lista = do
-    writeFile ruta lista
+appendArchivo :: String -> String -> IO ()
+appendArchivo ruta lista = do
+    appendFile ruta lista
     return ()
 --appendFile ruta "\n"
+
+
+
+
+
+     
