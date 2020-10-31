@@ -1,0 +1,4 @@
+1,facturado,206480624,Parqueo Guacima,Parqueo la Iglesia,B1237,AE
+2,facturado,206480624,Parqueo la Iglesia,Parqueo Guacima,B4323,AE
+3,facturado,206480624,Parqueo la Iglesia,Parqueo Guacima,B1237,AE
+4,activo,106470729,Parqueo Guacima,Parqueo la Iglesia,B1238,AE

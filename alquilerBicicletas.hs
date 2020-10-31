@@ -100,7 +100,12 @@ menuEstadisticas (p, b, u, a) =
                 topBicicletas b a p
                 menuEstadisticas (p, b, u, a)
             4 -> do
-                putStr "Se muestra el resumen\n"
+                putStr "Total de viajes: "
+                let viajes = length a 
+                putStr (show viajes )
+                putStr "Total de Kilometros: "
+                let kilometros = totalkilometros b p a 0
+                --putStr (show kilometros)
                 menuEstadisticas (p, b, u, a)
             5 -> return()
 

@@ -154,3 +154,9 @@ obtenerKilometrosXBici bici lP lA kilometrosTotales = do
             obtenerKilometrosXBici bici lP (tail lA) kilometrosTotales
 
 --Resumen
+
+totalkilometros :: [Bicicleta] -> [Parqueo] -> [Alquiler] -> Float -> IO Float
+totalkilometros listabici lP lA total = return total 
+totalkilometros listabici lP lA total = do 
+        let kilometros = obtenerKilometrosXBici (head listabici) lP lA 0
+        totalkilometros (tail listabici) lP  lA  (total+kilometros)
