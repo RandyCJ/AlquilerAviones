@@ -1,4 +1,6 @@
 module FuncionesGenerales where
+import Data.List
+
 
 separaPorComas :: ([Char], [Char]) -> [[Char]]
 separaPorComas (cadena, temp) =

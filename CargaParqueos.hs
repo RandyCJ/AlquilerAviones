@@ -49,7 +49,9 @@ showParqueos lP lB p =
         showParqueos (tail lP) lB p
 
 show1Parqueo :: [Parqueo] -> [Bicicleta] -> String -> IO ()
-show1Parqueo [] l s = return()
+show1Parqueo [] l s = do
+    putStr "\nEl nombre que ingreso no existe en el sistema\n"
+    return()
 show1Parqueo lP lB nombreParqueo = 
     do
         let parqueo = getNombreParqueo (head lP)
@@ -58,7 +60,7 @@ show1Parqueo lP lB nombreParqueo =
         else
             show1Parqueo (tail lP) lB nombreParqueo
 
-parqueoMasCercanoAux :: [Parqueo] -> [Bicicleta] -> IO ()
+parqueoMasCercanoAux :: [Parqueo] -> [Bicicleta] -> IO Parqueo
 parqueoMasCercanoAux lP lB = do
     putStr "Ingrese su posicion x: "
     pX <- getLine
@@ -66,10 +68,14 @@ parqueoMasCercanoAux lP lB = do
     putStr "Ingrese su posicion y: "
     pY <- getLine
     let pYF = (read pY :: Float)
-    parqueoMasCercano lP lB pXF pYF 0 (head lP)
+    temp <- parqueoMasCercano lP lB pXF pYF 0 (head lP)
+    return temp
 
-parqueoMasCercano :: [Parqueo] -> [Bicicleta] -> Float -> Float -> Float -> Parqueo -> IO ()
-parqueoMasCercano [] lB _ _ distancia parqueo = showParqueo parqueo lB "TP"
+parqueoMasCercano :: [Parqueo] -> [Bicicleta] -> Float -> Float -> Float -> Parqueo -> IO Parqueo
+parqueoMasCercano [] lB _ _ distancia parqueo = do 
+    showParqueo parqueo lB "TP"
+    return parqueo
+
 parqueoMasCercano lP lB x y distancia parqueo = do
     let xP = getUbicacionX (head lP)
     let yP = getUbicacionY (head lP)
@@ -96,3 +102,52 @@ leerArchivoParqueos archivo = do
     let parqueos = separaParqueos (lines contenido)
     return parqueos
 
+showParqueoSOLO :: Parqueo -> IO ()
+showParqueoSOLO parqueo =
+    let
+        nombre = getNombreParqueo(parqueo)
+        direccion = getDireccionParqueo(parqueo)
+        provincia = getProvinciaParqueo(parqueo)
+        ubx = getUbicacionX(parqueo)
+        uby = getUbicacionY(parqueo)
+    in
+        putStr("Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby ++ "\n")
+       
+showParqueosSOLOS :: [Parqueo] -> IO ()
+showParqueosSOLOS [] = return()
+showParqueosSOLOS lP =
+    do
+        showParqueoSOLO (head lP)
+        showParqueosSOLOS (tail lP)
+
+getParqueo :: String -> [Parqueo] -> Parqueo
+getParqueo nombreParqueo lP = do
+    let nombre = getNombreParqueo (head lP)
+
+    if nombreParqueo == nombre then
+        head lP
+    else
+        getParqueo nombreParqueo (tail lP)
+
+existeParqueo :: [Bicicleta] -> [Parqueo] -> [Bicicleta]
+existeParqueo [] lP = []
+existeParqueo lB lP = do
+    let nombrePBici = getUbicacion (head lB)
+
+    if nombrePBici == "en transito" then
+        [head lB] ++ existeParqueo (tail lB) lP
+    else
+        if (existeParqueoAux nombrePBici lP) == 0 then
+            [head lB] ++ existeParqueo (tail lB) lP
+        else
+            existeParqueo (tail lB) lP
+
+existeParqueoAux :: String -> [Parqueo] -> Integer
+existeParqueoAux s [] = 1
+existeParqueoAux nombreParqueoBici lP = do
+    let nombreParqueo = getNombreParqueo (head lP)
+
+    if nombreParqueoBici == nombreParqueo then
+        0
+    else
+        existeParqueoAux nombreParqueoBici (tail lP)

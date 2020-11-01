@@ -1,5 +1,7 @@
 module CargaBicicletas where
 import FuncionesGenerales
+import System.IO
+
 
 -- Estructura bicicletas
 type CodigoBic = String
@@ -58,6 +60,66 @@ separaBicicletas lista =
 
 leerArchivoBicicletas :: FilePath -> IO [Bicicleta]
 leerArchivoBicicletas archivo = do
-    contenido <- readFile archivo
+    file <- openFile archivo ReadWriteMode
+    contenido <- hGetContents file
     let bicicletas = separaBicicletas (lines contenido)
+    putStr (contenido)
     return bicicletas
+
+showBiciDisponible :: Bicicleta -> IO ()
+showBiciDisponible bicicleta =
+    let
+        codigo = getCodigo(bicicleta)
+        tipo = getTipo(bicicleta)
+        ubicacion = getUbicacion(bicicleta)
+    in
+        if ubicacion /= "transito" then
+            putStr("Codigo: " ++ codigo ++ ", Tipo: " ++ tipo ++ ", Ubicacion: " ++ ubicacion ++ "\n")
+        else
+            return ()
+
+showBicisDisponibles :: [Bicicleta] -> IO ()
+showBicisDisponibles [] = return()
+showBicisDisponibles listaBicicletas =
+    do
+        showBiciDisponible (head listaBicicletas)
+        showBicisDisponibles (tail listaBicicletas)
+
+
+getBicicleta :: String -> [Bicicleta] -> Bicicleta
+getBicicleta codBici lB = do
+    let codBicicleta = getCodigo (head lB)
+
+    if codBicicleta == codBici then
+        head lB
+    else
+        getBicicleta codBici (tail lB)
+
+
+cambiarUbicacion :: [Bicicleta] -> Bicicleta -> String -> [Bicicleta]
+cambiarUbicacion lB bicicleta ubicacion = do
+    let codigoBici = getCodigo (head lB)
+    let codBici = getCodigo (bicicleta)
+
+    if codBici == codigoBici then
+        do
+            let tipoBici = getTipo (bicicleta)
+            let nuevaBici = crearBicicleta([codBici, tipoBici, ubicacion])
+            [nuevaBici] ++ (tail lB)
+    else
+        [head lB] ++ cambiarUbicacion (tail lB) bicicleta ubicacion
+    
+bicisAString :: [Bicicleta] -> String -> String
+bicisAString [] s = s
+bicisAString lB string = do
+    let codigo = getCodigo (head lB)
+    let tipo = getTipo (head lB)
+    let ubicacion = getUbicacion (head lB)
+    let nuevaBici = codigo ++ "," ++ tipo ++ "," ++ ubicacion ++ "\n"
+
+    bicisAString (tail lB) (string ++ nuevaBici)
+
+escribirNuevosDatos :: String -> String -> IO ()
+escribirNuevosDatos ruta datos = do
+    writeFile ruta datos
+    return ()
