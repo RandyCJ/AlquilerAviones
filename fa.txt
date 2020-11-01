@@ -1,0 +1,7 @@
+1,Parqueo Guacima,Parqueo la Iglesia,206480624,B1237,AE,489.4981,700.0,342648.7
+2,Parqueo la Iglesia,Parqueo Guacima,206480624,B4323,AE,489.4981,700.0,342648.7
+3,Parqueo la Iglesia,Parqueo Guacima,206480624,B1237,AE,489.4981,700.0,342648.7
+5,Parqueo Guacima,Parqueo la Iglesia,206480624,B1237,AE,489.4981,700.0,342648.7
+7,Parqueo el Llano,Parqueo Guacima,402710364,B9191,TR,4048.796,400.0,1619518.4
+4,Parqueo Guacima,Parqueo la Iglesia,106470729,B1238,AE,489.4981,700.0,342648.7
+8,Parqueo Guacima,Parqueo el Llano,501740147,B1236,AE,4048.796,700.0,2834157.3

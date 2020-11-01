@@ -96,18 +96,18 @@ getBicicleta codBici lB = do
         getBicicleta codBici (tail lB)
 
 
-cambiarUbicacion :: [Bicicleta] -> Bicicleta -> [Bicicleta]
-cambiarUbicacion lB bicicleta = do
+cambiarUbicacion :: [Bicicleta] -> Bicicleta -> String -> [Bicicleta]
+cambiarUbicacion lB bicicleta ubicacion = do
     let codigoBici = getCodigo (head lB)
     let codBici = getCodigo (bicicleta)
 
     if codBici == codigoBici then
         do
             let tipoBici = getTipo (bicicleta)
-            let nuevaBici = crearBicicleta([codBici, tipoBici, "en transito"])
+            let nuevaBici = crearBicicleta([codBici, tipoBici, ubicacion])
             [nuevaBici] ++ (tail lB)
     else
-        [head lB] ++ cambiarUbicacion (tail lB) bicicleta
+        [head lB] ++ cambiarUbicacion (tail lB) bicicleta ubicacion
     
 bicisAString :: [Bicicleta] -> String -> String
 bicisAString [] s = s

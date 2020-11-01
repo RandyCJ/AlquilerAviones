@@ -106,3 +106,38 @@ showAlquileresXUsuario lA cedula = do
         showAlquileresXUsuario (tail lA) cedula
     else
         showAlquileresXUsuario (tail lA) cedula
+
+cambiarEstado :: [Alquiler] -> Integer -> [Alquiler]
+cambiarEstado lA idAlquiler = do
+    let codAlquiler = getIdentificador (head lA)
+
+    if codAlquiler == idAlquiler then
+        do
+        let cedUsuario = getCedulaUsuario (head lA)
+        let pS = getParqueoSalida (head lA)
+        let pL = getParqueoLlegada (head lA)
+        let codBici = getCodigoBici (head lA)
+        let tipoBici = getTipoBici (head lA)
+        let nuevoAlquiler = crearAlquiler([show idAlquiler, "facturado", show cedUsuario, pS, pL, codBici, tipoBici])
+        [nuevoAlquiler] ++ (tail lA)
+    else
+        [head lA] ++ cambiarEstado (tail lA) idAlquiler
+
+alquilerAString :: [Alquiler] -> String -> String
+alquilerAString [] s = s
+alquilerAString lA string = do
+    let id = getIdentificador (head lA)
+    let estado = getEstado (head lA)
+    let cedUsuario = getCedulaUsuario (head lA)
+    let pS = getParqueoSalida (head lA)
+    let pL = getParqueoLlegada (head lA)
+    let codBici = getCodigoBici (head lA)
+    let tipoBici = getTipoBici (head lA)
+    let nuevoAlquiler = show id ++ "," ++ estado ++ "," ++ show cedUsuario ++ "," ++ pS ++ "," ++ pL ++ "," ++ codBici ++ "," ++ tipoBici ++ "\n"
+
+    alquilerAString (tail lA) (string ++ nuevoAlquiler)
+
+reescribirAlquileres :: String -> IO ()
+reescribirAlquileres datos = do
+    writeFile "al.txt" datos
+    return ()
