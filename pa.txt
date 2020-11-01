@@ -1,2 +1,3 @@
 Parqueo Guacima,Al frente del pali,AL,12.3,43.1
 Parqueo la Iglesia,25 mts al sur de la iglesia,SJ,22.1,532.5
+Parqueo el Llano,100 mts sur del Estadio Alejandro Morera Soto,AL,2452.23,3274.12

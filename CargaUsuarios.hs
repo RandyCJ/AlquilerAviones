@@ -29,7 +29,9 @@ showUsuarios listaUsuarios =
         showUsuarios (tail listaUsuarios)
 
 show1Usuario :: [Usuario] -> Integer -> IO ()
-show1Usuario [] i = return()
+show1Usuario [] i = do
+    putStr "\n La cedula que ingreso no se encuentra en el sistema\n"
+    return()
 show1Usuario lU cedula =
     do
         let cedulaU = getCedula (head lU)

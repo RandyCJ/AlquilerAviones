@@ -49,7 +49,9 @@ showParqueos lP lB p =
         showParqueos (tail lP) lB p
 
 show1Parqueo :: [Parqueo] -> [Bicicleta] -> String -> IO ()
-show1Parqueo [] l s = return()
+show1Parqueo [] l s = do
+    putStr "\nEl nombre que ingreso no existe en el sistema\n"
+    return()
 show1Parqueo lP lB nombreParqueo = 
     do
         let parqueo = getNombreParqueo (head lP)
