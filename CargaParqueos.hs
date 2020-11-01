@@ -128,7 +128,7 @@ getParqueo nombreParqueo lP = do
         head lP
     else
         getParqueo nombreParqueo (tail lP)
-            
+
 existeParqueo :: [Bicicleta] -> [Parqueo] -> [Bicicleta]
 existeParqueo [] lP = []
 existeParqueo lB lP = do

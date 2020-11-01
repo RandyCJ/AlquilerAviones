@@ -253,7 +253,7 @@ main = do
     putStr ("Indique la ruta de los parqueos: ")
     ruta <- getLine
     parqueos <- leerArchivoParqueos ruta
-
+    
     putStr ("Indique la ruta de los usuarios: ")
     ruta <- getLine
     usuarios <- leerArchivoUsuarios ruta
