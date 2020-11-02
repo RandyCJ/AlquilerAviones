@@ -15,6 +15,10 @@ contacto = "27591648"
 tarifaPedal = 400
 tarifaElectrico = 700
 
+--Funcion encargada de facturar un alquiles
+--E: listas con parqueos, bicicletas, usuarios, alquileres, las bicicletas del archivo, las facturas y la ruta del archivo de las bicicletas
+--S: retorna una tupla con los valores actualizados de las listas recibidas en las entradas
+-- Funcionamiento: guarda y actualiza los valores de las listas que recibe, y escribe en los archivos para la persistencia de datos
 facturarAlquiler p b u a bA f rutaB = do
     putStr "Ingrese el codigo del alquiler a facturar: "
     id <- getLine
@@ -48,7 +52,10 @@ facturarAlquiler p b u a bA f rutaB = do
 
         return (p, listaNuevaBicicleta, u, listaNuevaAlquileres, listaBicisArchivo, listaNuevaFacturas)
 
-
+--Funcion encargada de alquilar una bici
+--E: listas con parqueos, bicicletas, usuarios, alquileres, las bicicletas del archivo, la ruta del archivo de las bicicletas y las facturas
+--S: retorna una tupla con los valores actualizados de las listas recibidas en las entradas
+-- Funcionamiento: guarda y actualiza los valores de las listas que recibe, y escribe en los archivos para la persistencia de datos
 alquilarBici p b u a rutaB bA f = do
     cedula <- solicitarCedula u
     parqueoObjeto <- parqueoMasCercanoAux p b
@@ -58,8 +65,7 @@ alquilarBici p b u a rutaB bA f = do
     let biciObjeto = getBicicleta bicicleta b
     putStr "\nParqueos de llegada:\n"
     showParqueosSOLOS p
-    putStr "\nSeleccione el parqueo de llegada (Con el nombre): \n"
-    parqueoL <- getLine
+    parqueoL <- solicitarParqueo p (getNombreParqueo parqueoObjeto)
     let codigoAlquiler = length a + 1
     let parametros = [show codigoAlquiler, "activo", show cedula, getNombreParqueo parqueoObjeto, parqueoL, bicicleta, getTipo biciObjeto]
     let stringParametros = (show codigoAlquiler ++ "," ++ "activo" ++ "," ++ show cedula ++ "," ++ getNombreParqueo parqueoObjeto ++ "," ++ parqueoL ++ "," ++ bicicleta ++ "," ++ parametros!!6)
@@ -69,9 +75,23 @@ alquilarBici p b u a rutaB bA f = do
     let listaBicisArchivo = cambiarUbicacion bA biciObjeto "en transito"
     let archivoBicis = bicisAString listaBicisArchivo ""
     escribirNuevosDatos rutaB archivoBicis
+    putStr ("\nEl codigo de su alquiler es: " ++ show codigoAlquiler ++ "\n")
     return (p,listaNuevaBicicleta,u,listaNuevaAlquiler, listaBicisArchivo, f)
-   
 
+-- Muestra en pantalla los datos de una factura
+--E: una lista con las facturas
+--S: N/A
+mostrarFactura f = do
+    putStr "\nIngrese el codigo de la factura: "
+    cod <- getLine
+    let codigo = (read cod :: Integer)
+    show1Factura f codigo nombreEmpresa sitioWeb contacto
+    return ()
+
+--Muestra en pantalla los parqueos
+--E: una lista con parqueos y otra con bicicletas
+--S: N/A
+--Funcionamiento: pide al usuario la provincia y muestra los parqueos de esa provincia
 cargarParqueos p b = do
     putStr "\nAL. Alajuela\n"
     putStr "SJ. San Jose\n"
@@ -85,7 +105,10 @@ cargarParqueos p b = do
     prov <- getLine
     showParqueos p b prov
     
-
+--Muestra en pantalla las bicicletas
+--E: una lista con parqueos y otra con bicicletas
+--S: N/A
+--Funcionamiento: pide al usuario el nombre del parqueo y muestra las bicicletas de esa provincia
 cargarBicicletas p b = do
     putStr "\n'#': Todas las bicicletas del sistema\n"
     putStr "'transito': Todas las bicicletas en transito\n"
@@ -102,6 +125,10 @@ cargarBicicletas p b = do
         else
             show1Parqueo p b nombreParqueo
 
+--Muestra en pantalla los usuarios
+--E: una lista con usuarios y otra con los alquileres
+--S: N/A
+--Funcionamiento: pide al usuario una cedula y muestra los datos del usuario y sus alquileres
 cargarUsuarios u a = do
     putStr "\nIngrese '#' para ver la informacion de todos los clientes\n"
     putStr "Ingrese una cedula para ver historial de alquileres de un cliente\n"
@@ -116,8 +143,10 @@ cargarUsuarios u a = do
         show1Usuario u cedula
         showAlquileresXUsuario a cedula
     
-
-menuEstadisticas (p, b, u, a) =
+--Menu de estadisticas
+--E: recibe listas con parqueos, bicicletas, usuarios, alquileeres y facturas
+--S: N/A, no retorna nada pues el menu de estadisticas no modifica ningun valor de las listas
+menuEstadisticas (p, b, u, a, f) =
     do
         putStr "\nMenu Estadisticas\n"
         putStr "1. Top 5 usuarios con mas viajes\n"
@@ -133,16 +162,16 @@ menuEstadisticas (p, b, u, a) =
         case opcionInt of
             1 -> do
                 topUsuarios u a
-                menuEstadisticas (p, b, u, a)
+                menuEstadisticas (p, b, u, a, f)
             2 -> do
                 topParqueos p a
-                menuEstadisticas (p, b, u, a)
+                menuEstadisticas (p, b, u, a, f)
             3 -> do
                 topBicicletas b a p
-                menuEstadisticas (p, b, u, a)
+                menuEstadisticas (p, b, u, a, f)
             4 -> do
-                putStr "Se muestra el resumen\n"
-                menuEstadisticas (p, b, u, a)
+                resumenEstadisticas b p a f
+                menuEstadisticas (p, b, u, a, f)
             5 -> return()
 
 
@@ -176,17 +205,8 @@ menuGeneral (p, b, u, a, rutaB, bA, f) =
             6 -> do
                 showFacturas f
                 menuGeneral (p, b, u, a, rutaB, bA, f)
-                
-            
-mostrarFactura f = do
-    putStr "\nIngrese el codigo de la factura: "
-    cod <- getLine
-    let codigo = (read cod :: Integer)
-    show1Factura f codigo nombreEmpresa sitioWeb contacto
-    return ()
 
-
-menuOperativo (p, b, u, a) =
+menuOperativo (p, b, u, a, f) =
     do
         putStr "\nMenu Operativo\n"
         putStr "1. Mostrar parqueos\n"
@@ -201,20 +221,20 @@ menuOperativo (p, b, u, a) =
         case opcion of
             1 -> do
                 cargarParqueos p b
-                menuOperativo (p, b, u, a)
+                menuOperativo (p, b, u, a, f)
             2 -> do
                 cargarBicicletas p b
-                menuOperativo (p, b, u, a)
+                menuOperativo (p, b, u, a, f)
             3 -> do
                 cargarUsuarios u a
-                menuOperativo (p, b, u, a)
+                menuOperativo (p, b, u, a, f)
             4 -> do
-                menuEstadisticas (p, b, u, a)
-                menuOperativo (p, b, u, a)
+                menuEstadisticas (p, b, u, a, f)
+                menuOperativo (p, b, u, a, f)
             5 -> return ()
             6 -> do
                 showAlquileres a
-                menuOperativo (p, b, u, a)
+                menuOperativo (p, b, u, a, f)
 
 
 
@@ -233,13 +253,13 @@ menuAux (p, b, u, a, rutaB, bA, f) =
                 putStr "\nUsuario: "
                 usuario <- getLine
                 if usuario == "admin" then
-                    menuOperativo (p, b, u, a)
+                    menuOperativo (p, b, u, a, f)
                 else
                     putStr "\nEl usuario que ingreso es incorrecto\n"
                 menuAux(p, b, u, a, rutaB, bA, f)
             2 -> do
                 tupla <- menuGeneral (p, b, u, a, rutaB, bA, f)
-                menuAux(getParqueos tupla, getBicis tupla, getUsuarios tupla, getAlquileres tupla, rutaB, getBicisArchivo tupla, f)
+                menuAux(getParqueos tupla, getBicis tupla, getUsuarios tupla, getAlquileres tupla, rutaB, getBicisArchivo tupla, getFacturas tupla)
             3 -> return ()
 
 getParqueos(p, _, _, _, _, _) = p
@@ -253,7 +273,7 @@ main = do
     putStr ("Indique la ruta de los parqueos: ")
     ruta <- getLine
     parqueos <- leerArchivoParqueos ruta
-    
+
     putStr ("Indique la ruta de los usuarios: ")
     ruta <- getLine
     usuarios <- leerArchivoUsuarios ruta
