@@ -28,6 +28,9 @@ getKilometros (Factura _ _ _ _ _ _ k _ _) = k;
 getTarifa (Factura _ _ _ _ _ _ _ t _) = t;
 getMontoTotal (Factura _ _ _ _ _ _ _ _ mT) = mT;
 
+--Muestra la informacion de una factura
+--E: lista de facturas, la id de la factura a mostrar
+--S: N/A
 showFactura:: [Factura] -> Integer -> IO ()
 showFactura [] i = do
     putStr "El codigo de factura que ingreso no existe"
@@ -40,6 +43,9 @@ showFactura lF codigoFactura = do
     else
         showFactura (tail lF) codigoFactura
 
+--Muestra la informacion de una factura
+--E: una factura
+--S: N/A
 showFacturaAux :: Factura -> IO ()
 showFacturaAux factura = do
     let codigoFactura = getIDFactura factura
@@ -64,7 +70,9 @@ showFacturaAux factura = do
     putStr ("\nMonto total: " ++ show montoTotal)
     putStr "\n--------------------------------------\n"
 
-
+--Crea una nueva factura y la agrega a la lista de facturas
+--E: lista de alquileres, id de la factura, id del alquiler a facturar, tarifa electrica, tarifa a pedal, lista de parqueos
+--S: lista de facturas con la nueva factura ya agregada
 nuevaFactura :: [Alquiler] -> Int -> Integer -> Float -> Float -> [Parqueo] -> IO [Factura]
 nuevaFactura [] _ _ _ _ _ = do
     putStr "\nEl codigo de alquiler que ingreso no existe\n"
@@ -87,6 +95,9 @@ nuevaFactura lA idFactura idAlquiler precioAE precioTR lP = do
     else
         nuevaFactura (tail lA) idFactura idAlquiler precioAE precioTR lP
 
+--Crea la nueva factura
+--E: el alquiler a facturar, tarifa correspondiente al tipo de bici, id de la factura, lista de parqueos
+--S: retorna la factura nueva
 nuevaFacturaAux :: Alquiler -> Float -> Int -> [Parqueo] -> Factura
 nuevaFacturaAux alquiler precio idFactura lP = do
     
@@ -106,6 +117,9 @@ nuevaFacturaAux alquiler precio idFactura lP = do
     let montoTotal = (precio*kilometros)
     crearFactura [show idALQ, nombrePS, nombrePL, show cedUsuario, codBici, tipoBici, show kilometros, show precio, show montoTotal]
 
+--Muestra todas las facturas
+--E: una lista de facturas
+--S: N/A
 showFacturas :: [Factura] -> IO ()
 showFacturas [] = return ()
 showFacturas lF = do
@@ -113,7 +127,9 @@ showFacturas lF = do
     showFacturaAux (head lF)
     showFacturas (tail lF)
 
-
+--Muesta una sola factura al usuario
+--E: lista de facturas, codigo de la factura a mostrar, nombre de la empresa, sitioWeb de la empresa, contacto de la empresa
+--S: N/A
 show1Factura :: [Factura] -> Integer -> String -> String -> String -> IO ()
 show1Factura [] _ _ _ _= do
     putStr "\nEl codigo que ingreso no se encuentra en el sistema\n"
@@ -130,13 +146,18 @@ show1Factura lF codigo nombreEmpresa sitioWeb contacto = do
     else
         show1Factura (tail lF) codigo nombreEmpresa sitioWeb contacto
 
+--Separa facturas en una lista de facturas
+--E: una lista con listas de strings
+--S: Retorna una lista de facturas
 separaFacturas :: [[Char]] -> [Factura]
 separaFacturas lista =
     if null(lista) then []
     else
         [crearFactura(separaPorComas((head lista), ""))] ++ separaFacturas (tail lista)
 
-
+--Lee el archivo de facturas 
+--E: ruta del archivo
+--S: retorna una lisa de facturas
 leerArchivoFacturas :: FilePath -> IO [Factura]
 leerArchivoFacturas archivo = do
     file <- openFile archivo ReadWriteMode
@@ -147,6 +168,9 @@ leerArchivoFacturas archivo = do
     --escribirArchivo "al.txt" contenido
     return facturas
 
+--Agrega una factura al archivo de facturas
+--E: la factura a agregar
+--S: N/A
 agregarFactura :: Factura -> IO ()
 agregarFactura factura = do
     let idFactura = getIDFactura factura

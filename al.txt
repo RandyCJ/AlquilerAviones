@@ -11,3 +11,4 @@
 11,facturado,206480624,Parqueo la Iglesia,Parqueo el Llano,B1238,AE
 12,facturado,206480624,Parqueo el Llano,Parqueo Guacima,B1236,AE
 13,activo,402710364,Parqueo Guacima,Parqueo la Iglesia,B1235,TR
+14,facturado,206480624,Parqueo la Iglesia,Parqueo Guacima,B4323,AE

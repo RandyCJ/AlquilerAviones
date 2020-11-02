@@ -174,7 +174,9 @@ menuEstadisticas (p, b, u, a, f) =
                 menuEstadisticas (p, b, u, a, f)
             5 -> return()
 
-
+--Menu General
+--E: recibe listas con parqueos, bicicletas, usuarios, alquileeres, facturas y la ruta de las bicis
+--S: retorna una tupla con las listas actualizadas que recibe de parametros
 menuGeneral (p, b, u, a, rutaB, bA, f) =
     do
         putStr "\nMenu General\n"
@@ -206,6 +208,9 @@ menuGeneral (p, b, u, a, rutaB, bA, f) =
                 showFacturas f
                 menuGeneral (p, b, u, a, rutaB, bA, f)
 
+--Menu Operativo
+--E: recibe listas con parqueos, bicicletas, usuarios, alquileeres, facturas y la ruta de las bicis
+--S: N/A, no retorna nada pues no modifica ningun valor de las listas
 menuOperativo (p, b, u, a, f) =
     do
         putStr "\nMenu Operativo\n"
@@ -237,7 +242,10 @@ menuOperativo (p, b, u, a, f) =
                 menuOperativo (p, b, u, a, f)
 
 
-
+--Menu Operativo
+--E: recibe listas con parqueos, bicicletas, usuarios, alquileeres, facturas y la ruta de las bicis
+--S: N/A
+--Funcionamiento: redirecciona a los menus operativo y general
 menuAux (p, b, u, a, rutaB, bA, f) = 
     do
         putStr "\nMenu Principal\n"
@@ -262,6 +270,7 @@ menuAux (p, b, u, a, rutaB, bA, f) =
                 menuAux(getParqueos tupla, getBicis tupla, getUsuarios tupla, getAlquileres tupla, rutaB, getBicisArchivo tupla, getFacturas tupla)
             3 -> return ()
 
+--Funciones para obtener los datos de las tuplas
 getParqueos(p, _, _, _, _, _) = p
 getBicis(_, b, _, _, _, _) = b
 getUsuarios(_, _, u, _, _, _) = u
@@ -269,6 +278,7 @@ getAlquileres(_, _, _, a, _, _) = a
 getBicisArchivo (_, _, _, _, bA, _) = bA
 getFacturas (_, _, _, _, _, f) = f
 
+--Funcion principal, pide las rutas y leer los archivos de los parqueos, usuarios, bicicletas, alquileres y facturas
 main = do
     putStr ("Indique la ruta de los parqueos: ")
     ruta <- getLine

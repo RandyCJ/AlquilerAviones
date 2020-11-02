@@ -20,6 +20,8 @@ getUbicacionX (Parqueo _ _ _ ubicacionx _) = ubicacionx;
 getUbicacionY (Parqueo _ _ _ _ ubicaciony) = ubicaciony;
 
 --Muestra Parqueos
+--E: recibe un parqueo y la lista de bicicletas y la provincia
+--S: N/A
 showParqueo :: Parqueo -> [Bicicleta] -> String -> IO ()
 showParqueo parqueo lB p =
     let
@@ -41,6 +43,9 @@ showParqueo parqueo lB p =
             else
                 return ()
 
+--Muestra todos los parqueos de una provincia
+--E: lista de parqueos, lista de bicicletas y la provincia
+--S: N/A
 showParqueos :: [Parqueo] -> [Bicicleta] -> String -> IO ()
 showParqueos [] b s = return()
 showParqueos lP lB p =
@@ -48,6 +53,9 @@ showParqueos lP lB p =
         showParqueo (head lP) lB p
         showParqueos (tail lP) lB p
 
+--Muestra los datos de un solo parqueo
+--E: lista de parqueos, lista de bicicletas, el nombre del parqueo a mostrar
+--S: N/A
 show1Parqueo :: [Parqueo] -> [Bicicleta] -> String -> IO ()
 show1Parqueo [] l s = do
     putStr "\nEl nombre que ingreso no existe en el sistema\n"
@@ -60,6 +68,8 @@ show1Parqueo lP lB nombreParqueo =
         else
             show1Parqueo (tail lP) lB nombreParqueo
 
+--Muestra el parqueo mas cercano a una coordenadas ingresadas
+--E: lista de parqueos, lista de bicicletas
 parqueoMasCercanoAux :: [Parqueo] -> [Bicicleta] -> IO Parqueo
 parqueoMasCercanoAux lP lB = do
     putStr "Ingrese su posicion x: "
@@ -71,6 +81,9 @@ parqueoMasCercanoAux lP lB = do
     temp <- parqueoMasCercano lP lB pXF pYF 0 (head lP)
     return temp
 
+--Muestra el parqueo cercano a una coordenadas
+--E: lista de parqueos, lista de bicicletas, coordenadas x y y, un float que indicara los kilometros y un parqueo
+--S: retorna el parqueo mas cercano
 parqueoMasCercano :: [Parqueo] -> [Bicicleta] -> Float -> Float -> Float -> Parqueo -> IO Parqueo
 parqueoMasCercano [] lB _ _ distancia parqueo = do 
     showParqueo parqueo lB "TP"
@@ -89,19 +102,27 @@ parqueoMasCercano lP lB x y distancia parqueo = do
             parqueoMasCercano (tail lP) lB x y distancia parqueo
 
         
-
+--Separa los parqueos en una lista
+--E: una lista con listas de strings
+--S: una lista de parqueos
 separaParqueos :: [[Char]] -> [Parqueo]
 separaParqueos lista =
     if null(lista) then []
     else
         [crearParqueo(separaPorComas((head lista), ""))] ++ separaParqueos (tail lista)
 
+--lee un archivo de parqueos
+--E: la ruta del archivo
+--S: una lista de parrqueos
 leerArchivoParqueos :: FilePath -> IO [Parqueo]
 leerArchivoParqueos archivo = do
     contenido <- readFile archivo
     let parqueos = separaParqueos (lines contenido)
     return parqueos
 
+--Muestra solo un parqueo, sin las bicis
+--E: un parqueo
+--S: N/A
 showParqueoSOLO :: Parqueo -> IO ()
 showParqueoSOLO parqueo =
     let
@@ -113,6 +134,9 @@ showParqueoSOLO parqueo =
     in
         putStr("Nombre: " ++ nombre ++ ", Direccion: " ++ direccion ++ ", Provincia: " ++ provincia ++ ", X: " ++ show ubx ++ ", Y: " ++ show uby ++ "\n")
        
+--muestra solo los parqueos sin sus bicicletas
+--E: lista de parqueos
+--S: N/A
 showParqueosSOLOS :: [Parqueo] -> IO ()
 showParqueosSOLOS [] = return()
 showParqueosSOLOS lP =
@@ -120,6 +144,9 @@ showParqueosSOLOS lP =
         showParqueoSOLO (head lP)
         showParqueosSOLOS (tail lP)
 
+--Retorna un parqueo
+--E: el nombre del parqueo a mostrar, lista de parqueos
+--S: retorna el parqueo
 getParqueo :: String -> [Parqueo] -> Parqueo
 getParqueo nombreParqueo lP = do
     let nombre = getNombreParqueo (head lP)
@@ -129,6 +156,9 @@ getParqueo nombreParqueo lP = do
     else
         getParqueo nombreParqueo (tail lP)
             
+--Verifica si existe un parqueo, esto para cuando se carguen las bicicletas, si no existe entonces la bicicleta no se agrega
+--E: lista de bicicletas, lista de parqueos
+-- S:retorna lista de bicicletas
 existeParqueo :: [Bicicleta] -> [Parqueo] -> [Bicicleta]
 existeParqueo [] lP = []
 existeParqueo lB lP = do
@@ -141,7 +171,9 @@ existeParqueo lB lP = do
             [head lB] ++ existeParqueo (tail lB) lP
         else
             existeParqueo (tail lB) lP
-
+--Verifica que un parqueo exista
+--E: nombre del parqueo, lista de parqueos
+--S: 0 si el parrqueo existe, 1 si no
 existeParqueoAux :: String -> [Parqueo] -> Integer
 existeParqueoAux s [] = 1
 existeParqueoAux nombreParqueoBici lP = do
@@ -152,6 +184,11 @@ existeParqueoAux nombreParqueoBici lP = do
     else
         existeParqueoAux nombreParqueoBici (tail lP)
 
+--Solicita al usuario el nombre de un parqueo
+--Si este es el mismo que el parqueo de salida lo pide de nuevo
+--Si el ingresado no existe lo pide de nuevo
+--E: lista de parqueos, nombre del parqueo de salida
+--S: retorna el nombre del parqueo ingresado
 solicitarParqueo :: [Parqueo] -> String -> IO (String)
 solicitarParqueo lP parqueoSalida = do
     putStr "\nSeleccione el parqueo de llegada (Con el nombre): \n"
@@ -168,6 +205,9 @@ solicitarParqueo lP parqueoSalida = do
             putStr "\nEl parqueo ingreso no existe, favor ingrese nuevamente\n"
             solicitarParqueo lP parqueoSalida
 
+--Verifica que un parqueo exista
+--E: nombre del parqueo, lista de parqueos
+--S: 0 si el parrqueo existe, 1 si no
 verificarParqueo :: [Parqueo] -> String -> Integer
 verificarParqueo [] i = 1
 verificarParqueo lP nombreParqueo = do

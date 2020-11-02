@@ -6,6 +6,10 @@ import FuncionesGenerales
 import Alquileres
 import Facturas
 
+--Imprime los tops
+--E: una lista con listas de strings ordenadas en orden de mayor a menor
+--   el numero maximo de elementos a imprimir, un contador
+--S: N/A
 imprimirTOPS :: [[String]] -> Integer -> Integer -> IO ()
 imprimirTOPS [] c i = return ()
 imprimirTOPS lTOP maximo contador = do
@@ -17,6 +21,9 @@ imprimirTOPS lTOP maximo contador = do
         putStr ("\t" ++ (actual!!0) ++ "||" ++ (actual!!1) ++ "\n")
         imprimirTOPS (tail lTOP) maximo (contador +1)
 
+--Inserta en una lista de listas de strings un valor en su espacio en una lista descendente
+--E: la lista con listas de strings, el string a insertar ordenadamente
+--S: La lista de listas de string ya ordenada con el nuevo insertado
 insertarOrdenado :: [[String]] -> [String] -> [[String]]
 insertarOrdenado lTOP datos = do
     if null(lTOP) then
@@ -27,6 +34,9 @@ insertarOrdenado lTOP datos = do
         else
             [(head lTOP)] ++ insertarOrdenado (tail lTOP) datos
 
+--Inserta en una lista de listas de strings un valor en su espacio en una lista descendente
+--E: la lista con listas de strings, el string a insertar ordenadamente
+--S: La lista de listas de string ya ordenada con el nuevo insertado
 insertarOrdenadoBici :: [[String]] -> [String] -> [[String]]
 insertarOrdenadoBici lTOP datos = do
     if null(lTOP) then
@@ -45,6 +55,9 @@ topUsuarios u a = do
     imprimirTOPS listaTOP 5 1
     return ()
 
+--Obtiene una lista de listas strigs ordenadas descendentemente
+--E: lista de usuarios, lista de alquileres, lista vacia donde se guardaran los valores
+--S: la lista ya ordenada descendentemente
 obtenerTOPUsuarios :: [Usuario] -> [Alquiler] -> [[String]] -> IO [[String]]
 obtenerTOPUsuarios [] lA lTOP = return lTOP
 obtenerTOPUsuarios lU lA lTOP = do
@@ -59,7 +72,9 @@ obtenerTOPUsuarios lU lA lTOP = do
         let listaTOP = insertarOrdenado lTOP [nombreUsuario, show cantidad]
         obtenerTOPUsuarios (tail lU) lA listaTOP        
 
-
+--Obtiene la cantidad de alquileres de cada usuario
+--E: un usuario, lista de alquileres, un entero 0 que se ira sumando cuando encuente un alquiler que le corresponda al usuario
+--S: la cantidad de alquileres de esa persona
 obtenerAlquileresXUsuario :: Usuario -> [Alquiler] -> Integer -> Integer
 obtenerAlquileresXUsuario usuario [] cantidad = cantidad
 obtenerAlquileresXUsuario usuario lA cantidad = do
@@ -79,6 +94,9 @@ topParqueos p a = do
     imprimirTOPS listaTOP 5 1
     return ()
 
+--Obtiene una lista de listas strigs ordenadas descendentemente
+--E: lista de parqueos, lista de alquileres, lista vacia donde se guardaran los valores
+--S: la lista ya ordenada descendentemente
 obtenerTOPParqueos :: [Parqueo] -> [Alquiler] -> [[String]] -> IO [[String]]
 obtenerTOPParqueos [] lA lTOP = return lTOP
 obtenerTOPParqueos lP lA lTOP = do
@@ -93,7 +111,9 @@ obtenerTOPParqueos lP lA lTOP = do
         let listaTOP = insertarOrdenado lTOP [nombreParqueo, show cantidad]
         obtenerTOPParqueos (tail lP) lA listaTOP
         
-
+--Obtiene la viajes de cada parqueo
+--E: un parqueo, lista de alquileres, un entero 0 que se ira sumando cuando encuente un viaje que corresponda al parqueo
+--S: la cantidad de viajes de ese parqueo
 obtenerViajesXParqueo :: Parqueo -> [Alquiler] -> Integer -> Integer
 obtenerViajesXParqueo p [] cantidad = cantidad
 obtenerViajesXParqueo parqueo lA cantidad = do
@@ -117,6 +137,9 @@ topBicicletas b a p = do
     imprimirTOPS listaTOP 3 1
     return ()
 
+--Obtiene una lista de listas strigs ordenadas descendentemente
+--E: lista de bicicletas, lista de alquileres, lista de parqueos, lista vacia donde se guardaran los valores
+--S: la lista ya ordenada descendentemente
 obtenerTOPBicicletas :: [Bicicleta] -> [Alquiler] -> [Parqueo] -> [[String]] -> IO [[String]]
 obtenerTOPBicicletas [] lA lP lTOP = return lTOP
 obtenerTOPBicicletas lB lA lP lTOP = do
@@ -131,6 +154,9 @@ obtenerTOPBicicletas lB lA lP lTOP = do
         let listaTOP = insertarOrdenadoBici lTOP [codigoBici, show kilometros]
         obtenerTOPBicicletas (tail lB) lA lP listaTOP
 
+--Obtiene los kilometros recorridos por cada bicicleta
+--E: una bicicleta, lista de parqueos, lista de alquileres, un entero 0 que se ira sumando cuando encuente un viaje que corresponda al parqueo
+--S: la cantidad de kilometros de esa bici
 obtenerKilometrosXBici :: Bicicleta -> [Parqueo] -> [Alquiler] -> Float -> Float
 obtenerKilometrosXBici b lP [] kilometrosTotales = kilometrosTotales
 obtenerKilometrosXBici bici lP lA kilometrosTotales = do 
@@ -155,12 +181,18 @@ obtenerKilometrosXBici bici lP lA kilometrosTotales = do
             obtenerKilometrosXBici bici lP (tail lA) kilometrosTotales
 
 --Resumen
+
+--obtiene la suma de todos los kilometros de todas las bicis
+--E: lista de bicicletas, lista de parqueos, lista de alquileres, un 0 que ira sumando los kilometros
 totalKilometros :: [Bicicleta] -> [Parqueo] -> [Alquiler] -> Float -> Float
 totalKilometros [] lP lA total = total 
 totalKilometros lB lP lA total = do 
         let kilometros = obtenerKilometrosXBici (head lB) lP lA 0
         totalKilometros (tail lB) lP  lA  (total+kilometros)
 
+--Imprime en pantalla las estadisticas
+--E: lista de bicicletas, lista de parqueos, lista de alquileres, lista de facturas
+--S: S/A
 resumenEstadisticas :: [Bicicleta] -> [Parqueo] -> [Alquiler] -> [Factura] -> IO ()
 resumenEstadisticas lB lP lA lF = do
     putStr "\nResumen general\n"

@@ -5,7 +5,7 @@ B1237,AE,Parqueo la Iglesia
 B1238,AE,Parqueo el Llano
 B4321,TR,Parqueo la Iglesia
 B4322,TR,Parqueo el Llano
-B4323,AE,Parqueo la Iglesia
+B4323,AE,Parqueo Guacima
 B4324,AE,en transito
 B9191,TR,Parqueo el Llano
 B9192,AE,Parqueo la Agonia
