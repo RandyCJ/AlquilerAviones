@@ -67,17 +67,23 @@ showFacturaAux factura = do
 
 nuevaFactura :: [Alquiler] -> Int -> Integer -> Float -> Float -> [Parqueo] -> IO [Factura]
 nuevaFactura [] _ _ _ _ _ = do
-    putStr "\nEl codigo de alquiler que ingreso no existe"
+    putStr "\nEl codigo de alquiler que ingreso no existe\n"
     return []
 nuevaFactura lA idFactura idAlquiler precioAE precioTR lP = do
     let codAlquiler = getIdentificador (head lA)
 
     if idAlquiler == codAlquiler then do
-        let tipoBici = getTipoBici (head lA)
-        if tipoBici == "AE" then
-            return [nuevaFacturaAux (head lA) precioAE idFactura lP]
+        let estado = getEstado (head lA)
+        if estado == "facturado" then do
+            putStr "\nEl codigo de alquiler que ingreso ya se encuentra facturado\n"
+            return []
         else
-            return [nuevaFacturaAux (head lA) precioTR idFactura lP]
+            do
+            let tipoBici = getTipoBici (head lA)
+            if tipoBici == "AE" then
+                return [nuevaFacturaAux (head lA) precioAE idFactura lP]
+            else
+                return [nuevaFacturaAux (head lA) precioTR idFactura lP]
     else
         nuevaFactura (tail lA) idFactura idAlquiler precioAE precioTR lP
 
@@ -155,3 +161,4 @@ agregarFactura factura = do
     let string = show idFactura ++ "," ++ nombrePS ++ "," ++ nombrePL ++ "," ++ show cedUsuario ++ "," ++ codBici ++ "," ++ tipoBici ++ "," ++ show kilometros ++ "," ++ show precio ++ "," ++ show montoTotal ++ "\n"
     appendFile "fa.txt" string
     return ()
+

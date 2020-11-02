@@ -4,6 +4,7 @@ import CargaParqueos
 import CargaBicicletas
 import FuncionesGenerales
 import Alquileres
+import Facturas
 
 imprimirTOPS :: [[String]] -> Integer -> Integer -> IO ()
 imprimirTOPS [] c i = return ()
@@ -154,3 +155,21 @@ obtenerKilometrosXBici bici lP lA kilometrosTotales = do
             obtenerKilometrosXBici bici lP (tail lA) kilometrosTotales
 
 --Resumen
+totalKilometros :: [Bicicleta] -> [Parqueo] -> [Alquiler] -> Float -> Float
+totalKilometros [] lP lA total = total 
+totalKilometros lB lP lA total = do 
+        let kilometros = obtenerKilometrosXBici (head lB) lP lA 0
+        totalKilometros (tail lB) lP  lA  (total+kilometros)
+
+resumenEstadisticas :: [Bicicleta] -> [Parqueo] -> [Alquiler] -> [Factura] -> IO ()
+resumenEstadisticas lB lP lA lF = do
+    putStr "\nResumen general\n"
+
+    let totalViajes = length lA
+    putStr ("\nTotal de viajes: " ++ show totalViajes)
+
+    let kilometrosTotales = totalKilometros lB lP lA 0
+    putStr ("\nKilometros totales: " ++ show kilometrosTotales)
+
+    let totalFacturas = length lF
+    putStr ("\nTotal de facturas generadas: " ++ show totalFacturas ++ "\n")

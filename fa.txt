@@ -5,3 +5,7 @@
 7,Parqueo el Llano,Parqueo Guacima,402710364,B9191,TR,4048.796,400.0,1619518.4
 4,Parqueo Guacima,Parqueo la Iglesia,106470729,B1238,AE,489.4981,700.0,342648.7
 8,Parqueo Guacima,Parqueo el Llano,501740147,B1236,AE,4048.796,700.0,2834157.3
+9,Parqueo la Iglesia,Parqueo el Llano,206480624,B4322,TR,3663.6064,400.0,1465442.6
+10,Parqueo Guacima,Parqueo el Llano,307580142,B9191,TR,4048.796,400.0,1619518.4
+11,Parqueo la Iglesia,Parqueo el Llano,206480624,B1238,AE,3663.6064,700.0,2564524.5
+12,Parqueo el Llano,Parqueo Guacima,206480624,B1236,AE,4048.796,700.0,2834157.3

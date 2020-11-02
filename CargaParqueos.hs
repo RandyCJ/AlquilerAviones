@@ -128,7 +128,7 @@ getParqueo nombreParqueo lP = do
         head lP
     else
         getParqueo nombreParqueo (tail lP)
-
+            
 existeParqueo :: [Bicicleta] -> [Parqueo] -> [Bicicleta]
 existeParqueo [] lP = []
 existeParqueo lB lP = do
@@ -151,3 +151,28 @@ existeParqueoAux nombreParqueoBici lP = do
         0
     else
         existeParqueoAux nombreParqueoBici (tail lP)
+
+solicitarParqueo :: [Parqueo] -> String -> IO (String)
+solicitarParqueo lP parqueoSalida = do
+    putStr "\nSeleccione el parqueo de llegada (Con el nombre): \n"
+    nombreParqueo <- getLine
+    
+    if nombreParqueo == parqueoSalida then do
+        putStr "\nNo puede seleccionar el mismo parqueo de salida como el de llegada\n"
+        solicitarParqueo lP parqueoSalida
+    else
+        if (verificarParqueo lP nombreParqueo) == 0 then
+            return nombreParqueo
+        else
+            do
+            putStr "\nEl parqueo ingreso no existe, favor ingrese nuevamente\n"
+            solicitarParqueo lP parqueoSalida
+
+verificarParqueo :: [Parqueo] -> String -> Integer
+verificarParqueo [] i = 1
+verificarParqueo lP nombreParqueo = do
+    let parqueo = getNombreParqueo (head lP)
+    if nombreParqueo == parqueo then
+        0
+    else
+        verificarParqueo (tail lP) nombreParqueo
